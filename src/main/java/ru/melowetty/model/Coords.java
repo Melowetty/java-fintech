@@ -1,9 +1,6 @@
 package ru.melowetty.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -12,4 +9,12 @@ import lombok.Setter;
 public class Coords {
     public float lat;
     public float lon;
+
+    @Override
+    public String toString() {
+        return "Coords{" +
+                "lat=" + lat +
+                ", lon=" + lon +
+                '}';
+    }
 }
