@@ -28,10 +28,10 @@ public class CityReaderService {
 
         } catch (DatabindException | StreamReadException exception) {
             log.error("Произошла ошибка конвертации файла в объект");
-            log.error(exception.getMessage());
+            log.error(exception.toString());
         } catch (IOException ioException) {
             log.error("Произошла ошибка во время чтения файла!");
-            log.error(ioException.getMessage());
+            log.error(ioException.toString());
         }
         return null;
     }

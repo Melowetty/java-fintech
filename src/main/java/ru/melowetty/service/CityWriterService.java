@@ -17,7 +17,7 @@ public class CityWriterService {
             log.debug("Конец сохранения города в файл");
         } catch (IOException e) {
             log.error("Произошла ошибка во время сохранения файла!");
-            log.error(e.getMessage());
+            log.error(e.toString());
         }
     }
 }
