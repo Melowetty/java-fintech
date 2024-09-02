@@ -6,15 +6,8 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Coords {
     public float lat;
     public float lon;
-
-    @Override
-    public String toString() {
-        return "Coords{" +
-                "lat=" + lat +
-                ", lon=" + lon +
-                '}';
-    }
 }

@@ -6,15 +6,8 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class City {
     public String slug;
     public Coords coords;
-
-    @Override
-    public String toString() {
-        return "City{" +
-                "slug='" + slug + '\'' +
-                ", coords=" + coords +
-                '}';
-    }
 }
