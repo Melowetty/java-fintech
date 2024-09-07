@@ -17,13 +17,13 @@ public class Main {
     private static final CityXmlConverterService cityXmlConverterService = new CityXmlConverterService(new XmlMapper());
 
     public static void main(String[] args) throws IOException {
-        try(Scanner scanner = new Scanner(System.in)) {
+        try (Scanner scanner = new Scanner(System.in)) {
             System.out.println("Введите название json-файла с городом:");
             String fileName = scanner.nextLine();
 
             var city = cityReaderService.readCityFromFile(fileName);
 
-            if(city == null) {
+            if (city == null) {
                 log.warn("City is null, shutdown program");
                 throw new RuntimeException("City is null");
             }
