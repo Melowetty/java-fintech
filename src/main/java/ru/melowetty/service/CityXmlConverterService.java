@@ -18,8 +18,7 @@ public class CityXmlConverterService {
             log.debug("Конец конвертации города в XML");
             return xml;
         } catch (JsonProcessingException e) {
-            log.error("Произошла ошибка во время сериализации объекта City в XML");
-            log.error(e.toString());
+            log.error("Произошла ошибка во время сериализации объекта City в XML", e);
         }
 
         return null;
