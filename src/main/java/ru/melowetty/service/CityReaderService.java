@@ -14,7 +14,7 @@ import java.nio.file.Path;
 @AllArgsConstructor
 public class CityReaderService {
 
-    protected ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     public City readCityFromFile(String fileName) {
         try {
