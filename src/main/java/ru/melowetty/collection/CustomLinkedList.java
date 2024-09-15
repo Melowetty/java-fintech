@@ -1,6 +1,11 @@
 package ru.melowetty.collection;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import static java.lang.reflect.Array.newInstance;
 
