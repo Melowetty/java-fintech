@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import ru.melowetty.annotation.Timed;
 import ru.melowetty.controller.request.CategoryCreateRequest;
 import ru.melowetty.controller.request.CategoryPutRequest;
 import ru.melowetty.model.Category;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/v1/places/categories")
+@Timed
 public class CategoryController {
     public final CategoryService categoryService;
 

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import ru.melowetty.annotation.Timed;
 import ru.melowetty.controller.request.LocationCreateRequest;
 import ru.melowetty.controller.request.LocationPutRequest;
 import ru.melowetty.model.Location;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/v1/locations")
+@Timed
 public class LocationController {
     private final LocationService locationService;
 
