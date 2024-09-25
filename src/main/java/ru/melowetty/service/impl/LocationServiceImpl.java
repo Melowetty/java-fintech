@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import ru.melowetty.annotation.Timed;
 import ru.melowetty.controller.request.LocationPutRequest;
 import ru.melowetty.exception.EntityNotFoundException;
 import ru.melowetty.model.Location;
@@ -26,6 +27,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @EventListener(ApplicationReadyEvent.class)
+    @Timed
     public void initialize() {
         log.info("Инициализация городов запущена");
         var locations = kudagoService.getLocations();
