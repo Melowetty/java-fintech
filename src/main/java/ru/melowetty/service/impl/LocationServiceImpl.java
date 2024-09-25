@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 public class LocationServiceImpl implements LocationService {
-    private LocationRepository locationRepository;
+    private final LocationRepository locationRepository;
 
     public LocationServiceImpl(LocationRepository locationRepository) {
         this.locationRepository = locationRepository;

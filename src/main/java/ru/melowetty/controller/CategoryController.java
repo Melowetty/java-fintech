@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1/places/categories")
 public class CategoryController {
-    public CategoryService categoryService;
+    public final CategoryService categoryService;
 
     public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
