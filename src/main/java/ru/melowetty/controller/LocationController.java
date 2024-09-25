@@ -26,28 +26,28 @@ public class LocationController {
         this.locationService = locationService;
     }
 
-    @GetMapping
+    @GetMapping(produces = "application/json")
     public List<Location> getLocations() {
         return locationService.getLocations();
     }
 
-    @GetMapping("/{slug}")
+    @GetMapping(path = "/{slug}", produces = "application/json")
     public Location getLocationBySlug(@PathVariable String slug) {
         return locationService.getLocationBySlug(slug);
     }
 
-    @DeleteMapping("/{slug}")
+    @DeleteMapping(path = "/{slug}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteLocation(@PathVariable String slug) {
         locationService.deleteLocation(slug);
     }
 
-    @PostMapping
+    @PostMapping(produces = "application/json")
     public Location createLocation(@RequestBody LocationCreateRequest request) {
         return locationService.createLocation(request.slug, request.name);
     }
 
-    @PutMapping("/{slug}")
+    @PutMapping(path = "/{slug}", produces = "application/json")
     public Location updateLocation(@PathVariable String slug, @RequestBody LocationPutRequest request) {
         return locationService.updateLocation(slug, request);
     }

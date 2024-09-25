@@ -26,22 +26,22 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @GetMapping
+    @GetMapping(produces = "application/json")
     public List<Category> getCategories() {
         return categoryService.getCategories();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(path = "/{id}", produces = "application/json")
     public Category getCategoryById(@PathVariable int id) {
         return categoryService.getCategoryById(id);
     }
 
-    @PostMapping
+    @PostMapping(produces = "application/json")
     public Category createCategory(@RequestBody CategoryCreateRequest request) {
         return categoryService.createCategory(request.getSlug(), request.getName());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(path = "/{id}", produces = "application/json")
     public Category updateCategory(@PathVariable int id, @RequestBody CategoryPutRequest request) {
         return categoryService.updateCategory(id,request);
     }
