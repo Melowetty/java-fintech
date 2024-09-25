@@ -31,10 +31,10 @@ public class KudagoServiceImpl implements KudagoService {
                 throw new RestClientException("Ответ от Kudago API пустой");
             }
 
-            return Arrays.stream(response).map(l -> {
+            return Arrays.stream(response).map(c -> {
                 var category = new Category();
-                category.setName(l.name);
-                category.setSlug(l.slug);
+                category.setName(c.name);
+                category.setSlug(c.slug);
 
                 return category;
             }).toList();
