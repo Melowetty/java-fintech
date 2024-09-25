@@ -44,7 +44,7 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public Location getLocationBySlug(String slug) {
-        if (locationRepository.existsById(slug)) {
+        if (!locationRepository.existsById(slug)) {
             throw new EntityNotFoundException("Локация с таким идентификатором не найдена!");
         }
 
@@ -61,7 +61,7 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public Location updateLocation(String slug, LocationPutRequest request) {
-        if (locationRepository.existsById(slug)) {
+        if (!locationRepository.existsById(slug)) {
             throw new EntityNotFoundException("Локация с таким идентификатором не найдена!");
         }
 
@@ -73,7 +73,7 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public void deleteLocation(String slug) {
-        if (locationRepository.existsById(slug)) {
+        if (!locationRepository.existsById(slug)) {
             throw new EntityNotFoundException("Локация с таким идентификатором не найдена!");
         }
 

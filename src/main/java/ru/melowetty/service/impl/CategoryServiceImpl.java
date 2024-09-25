@@ -44,7 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category getCategoryById(int id) {
-        if(categoryRepository.existsById(id)) {
+        if(!categoryRepository.existsById(id)) {
             throw new EntityNotFoundException("Категория с таким идентификатором не найдена!");
         }
         return categoryRepository.findById(id);
@@ -60,7 +60,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category updateCategory(int id, CategoryPutRequest request) {
-        if(categoryRepository.existsById(id)) {
+        if(!categoryRepository.existsById(id)) {
             throw new EntityNotFoundException("Категория с таким идентификатором не найдена!");
         }
         var category = new Category();
@@ -72,7 +72,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategoryById(int id) {
-        if(categoryRepository.existsById(id)) {
+        if(!categoryRepository.existsById(id)) {
             throw new EntityNotFoundException("Категория с таким идентификатором не найдена!");
         }
 
