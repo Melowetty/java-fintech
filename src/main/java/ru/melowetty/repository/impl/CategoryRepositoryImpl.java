@@ -8,10 +8,8 @@ import ru.melowetty.repository.CategoryRepository;
 public class CategoryRepositoryImpl extends BaseRepositoryImpl<Category, Integer> implements CategoryRepository {
     @Override
     public Category create(Category entity) {
-        var category = super.create(entity);
-        category.setId(count());
-
-        return category;
+        entity.setId(count() + 1);
+        return super.create(entity);
     }
 
     @Override

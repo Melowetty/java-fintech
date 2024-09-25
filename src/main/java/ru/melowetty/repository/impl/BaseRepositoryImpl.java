@@ -12,8 +12,9 @@ abstract class BaseRepositoryImpl<E, I> implements BaseRepository<E, I> {
 
     @Override
     public E create(E entity) {
+        storage.put(getIndexFromEntity(entity), entity);
         idCounter.incrementAndGet();
-        return storage.put(getIndexFromEntity(entity), entity);
+        return entity;
     }
 
     @Override
@@ -23,7 +24,8 @@ abstract class BaseRepositoryImpl<E, I> implements BaseRepository<E, I> {
 
     @Override
     public E update(E entity) {
-        return storage.put(getIndexFromEntity(entity), entity);
+        storage.put(getIndexFromEntity(entity), entity);
+        return entity;
     }
 
     @Override
