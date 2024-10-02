@@ -2,6 +2,7 @@ package ru.melowetty.service.impl;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -15,6 +16,9 @@ import java.util.List;
 @Service
 @Slf4j
 public class KudagoServiceImpl implements KudagoService {
+    @Value("${api.kudago.base-path}")
+    private String BASE_URL;
+
     private final RestTemplate restTemplate;
 
     public KudagoServiceImpl(RestTemplate restTemplate) {
@@ -24,7 +28,7 @@ public class KudagoServiceImpl implements KudagoService {
     @Override
     public List<Category> getCategories() {
         try {
-            var response = restTemplate.getForObject("https://kudago.com/public-api/v1.4/place-categories/",
+            var response = restTemplate.getForObject(BASE_URL + "/place-categories/",
                     KudagoCategoryResponse[].class);
 
             if (response == null) {
@@ -47,7 +51,7 @@ public class KudagoServiceImpl implements KudagoService {
     @Override
     public List<Location> getLocations() {
         try {
-            var response = restTemplate.getForObject("https://kudago.com/public-api/v1.4/locations/", KudagoLocationResponse[].class);
+            var response = restTemplate.getForObject(BASE_URL + "/locations/", KudagoLocationResponse[].class);
 
             if (response == null) {
                 throw new RestClientException("Ответ от Kudago API пустой");
