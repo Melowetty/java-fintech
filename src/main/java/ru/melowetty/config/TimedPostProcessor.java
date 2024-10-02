@@ -16,7 +16,7 @@ import java.util.Map;
 @Component
 @Slf4j
 public class TimedPostProcessor implements BeanPostProcessor {
-    private final Map<String, Class<?>> timedClasses = new HashMap<>();
+    protected final Map<String, Class<?>> timedClasses = new HashMap<>();
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) {
