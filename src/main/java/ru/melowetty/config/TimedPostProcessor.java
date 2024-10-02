@@ -20,7 +20,7 @@ public class TimedPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) {
-        if(timedClasses.containsKey(beanName)) {
+        if (timedClasses.containsKey(beanName)) {
             var proxy = new ProxyFactory(bean);
             proxy.addAdvice(new TimedMethodInterceptor());
             return proxy.getProxy();
@@ -30,7 +30,7 @@ public class TimedPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        if(bean.getClass().getAnnotation(Timed.class) != null) {
+        if (bean.getClass().getAnnotation(Timed.class) != null) {
             timedClasses.put(beanName, bean.getClass());
         }
         return BeanPostProcessor.super.postProcessBeforeInitialization(bean, beanName);

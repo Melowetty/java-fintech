@@ -16,10 +16,9 @@ import java.util.List;
 @Service
 @Slf4j
 public class KudagoServiceImpl implements KudagoService {
+    private final RestTemplate restTemplate;
     @Value("${api.kudago.base-path}")
     private String BASE_URL;
-
-    private final RestTemplate restTemplate;
 
     public KudagoServiceImpl(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;

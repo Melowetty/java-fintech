@@ -20,13 +20,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @Testcontainers
 public class KudagoServiceImplTest {
-    @Autowired
-    private KudagoServiceImpl kudagoService;
-
     @Container
     static WireMockContainer wireMock = new WireMockContainer("wiremock/wiremock:3.2.0-alpine")
             .withMappingFromResource(KudagoServiceImplTest.class, "locations.json")
             .withMappingFromResource(KudagoServiceImplTest.class, "categories.json");
+    @Autowired
+    private KudagoServiceImpl kudagoService;
 
     @DynamicPropertySource
     public static void properties(DynamicPropertyRegistry registry) {
