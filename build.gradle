@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'org.springframework.boot' version '3.3.4'
+    id 'io.spring.dependency-management' version '1.1.6'
 }
 
 group = 'ru.melowetty'
@@ -9,30 +11,22 @@ repositories {
     mavenCentral()
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
 dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.0-rc1'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.0-rc1'
-    implementation 'org.slf4j:slf4j-api:2.0.16'
-    implementation 'org.slf4j:slf4j-simple:2.0.16'
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {
     useJUnitPlatform()
-}
-
-jar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    manifest {
-        attributes(
-                "Main-Class": "ru.melowetty.Main"
-        )
-    }
-
-    from {
-        configurations.getByName("compileClasspath").collect { it.isDirectory() ? it : zipTree(it) }
-    }
 }
