@@ -4,3 +4,6 @@ server:
     encoding:
       force-response: true
       charset: UTF-8
+api:
+  kudago:
+    base-path: https://kudago.com/public-api/v1.4

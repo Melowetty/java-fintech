@@ -1,0 +1,24 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/place-categories/"
+  },
+  "response": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "status": 200,
+    "jsonBody": [
+      {
+        "id": 1,
+        "slug": "cafe",
+        "name": "Кафе"
+      },
+      {
+        "id": 2,
+        "slug": "house",
+        "name": "Дом"
+      }
+    ]
+  }
+}

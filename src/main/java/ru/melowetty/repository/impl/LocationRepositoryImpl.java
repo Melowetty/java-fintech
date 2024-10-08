@@ -7,7 +7,7 @@ import ru.melowetty.repository.LocationRepository;
 @Repository
 public class LocationRepositoryImpl extends BaseRepositoryImpl<Location, String> implements LocationRepository {
     @Override
-    String getIndexFromEntity(Location entity) {
+    protected String getIndexFromEntity(Location entity) {
         return entity.slug;
     }
 }

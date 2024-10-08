@@ -45,7 +45,7 @@ public class CategoryController {
 
     @PutMapping(path = "/{id}", produces = "application/json")
     public Category updateCategory(@PathVariable int id, @RequestBody CategoryPutRequest request) {
-        return categoryService.updateCategory(id,request);
+        return categoryService.updateCategory(id, request);
     }
 
     @DeleteMapping("/{id}")

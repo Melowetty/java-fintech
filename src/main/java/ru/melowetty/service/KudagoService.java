@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface KudagoService {
     List<Category> getCategories();
+
     List<Location> getLocations();
 }

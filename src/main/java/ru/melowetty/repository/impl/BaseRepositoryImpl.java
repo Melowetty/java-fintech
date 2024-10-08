@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-abstract class BaseRepositoryImpl<E, I> implements BaseRepository<E, I> {
+public abstract class BaseRepositoryImpl<E, I> implements BaseRepository<E, I> {
     private final ConcurrentHashMap<I, E> storage = new ConcurrentHashMap<>();
     private final AtomicInteger idCounter = new AtomicInteger(0);
 
@@ -43,9 +43,9 @@ abstract class BaseRepositoryImpl<E, I> implements BaseRepository<E, I> {
         return storage.containsKey(id);
     }
 
-    protected int count() {
+    public int count() {
         return idCounter.intValue();
     }
 
-    abstract I getIndexFromEntity(E entity);
+    protected abstract I getIndexFromEntity(E entity);
 }
