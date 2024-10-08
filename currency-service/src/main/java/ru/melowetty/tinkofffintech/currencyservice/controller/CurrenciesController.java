@@ -1,6 +1,7 @@
 package ru.melowetty.tinkofffintech.currencyservice.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +20,7 @@ public class CurrenciesController {
 
     @GetMapping("/rates/{code}")
     @Operation(summary = "Получение курса валюты по её коду")
-    public CurrencyRateResponse getCurrencyRate(@PathVariable String code) {
+    public CurrencyRateResponse getCurrencyRate(@PathVariable @Parameter(name = "Код валюты") String code) {
         return null;
     }
 
