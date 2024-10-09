@@ -14,7 +14,6 @@ public class CurrencyConverterService {
         this.currencyService = currencyService;
     }
 
-
     public BigDecimal convertCurrency(Currency fromCurrency, Currency toCurrency, BigDecimal initialAmount) {
         var fromCurrencyRate = currencyService.getCurrencyRate(fromCurrency);
         var initialAmountByRubles = fromCurrencyRate.multiply(initialAmount);
