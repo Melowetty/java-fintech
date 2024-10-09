@@ -24,9 +24,8 @@ import java.util.List;
 
 @Service
 public class CentralBankCurrencyService implements CurrencyService {
-    private final RestTemplate restTemplate;
     private static final String serviceName = "central-bank-service";
-
+    private final RestTemplate restTemplate;
     @Value("${api.central-bank.url}")
     public String baseUrl;
 
@@ -67,7 +66,7 @@ public class CentralBankCurrencyService implements CurrencyService {
 
         params.put("data_req", formatter.format(currentDate));
 
-        var response = restTemplate.getForEntity(baseUrl + "/scripts/XML_daily.asp", CentralBankCurrencyRate[].class,params);
+        var response = restTemplate.getForEntity(baseUrl + "/scripts/XML_daily.asp", CentralBankCurrencyRate[].class, params);
 
         if (response.getStatusCode().is5xxServerError()) {
             throw new CentralBankServiceUnavailableException();
