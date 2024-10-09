@@ -1,5 +1,6 @@
 package ru.melowetty.tinkofffintech.currencyservice.service.impl;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,7 @@ import java.util.List;
 @Service
 public class CentralBankCurrencyService implements CurrencyService {
     private final RestTemplate restTemplate;
+    private static final String serviceName = "central-bank-service";
 
     @Value("${api.central-bank.url}")
     public String baseUrl;
@@ -34,6 +36,7 @@ public class CentralBankCurrencyService implements CurrencyService {
 
     @Override
     @Cacheable(value = "currency-rate")
+    @CircuitBreaker(name = serviceName, fallbackMethod = "fallbackCurrencyRate")
     public BigDecimal getCurrencyRate(Currency currency) {
         CurrencyRate rate = getCurrenciesRate().stream()
                 .filter((currencyRate) -> currencyRate.currency.equals(currency))
@@ -42,8 +45,17 @@ public class CentralBankCurrencyService implements CurrencyService {
         return rate.rate;
     }
 
+    public BigDecimal fallbackCurrencyRate(Currency currency, Exception e) {
+        throw new CentralBankServiceUnavailableException();
+    }
+
+    public List<CurrencyRate> fallbackCurrencyRates(Exception e) {
+        throw new CentralBankServiceUnavailableException();
+    }
+
     @Override
     @Cacheable(value = "currency-rates")
+    @CircuitBreaker(name = serviceName, fallbackMethod = "fallbackCurrencyRates")
     public List<CurrencyRate> getCurrenciesRate() {
         var params = new HashMap<String, String>();
 
