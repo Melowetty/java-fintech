@@ -33,16 +33,16 @@ public class CurrencyConvertRequest {
 
     @AssertTrue(message = "Такой исходной валюты не существует")
     public boolean isFromCurrency() {
-        return CurrencyUtils.getCurrency(fromCurrency) != null;
+        return fromCurrency != null && CurrencyUtils.getCurrency(fromCurrency) != null;
     }
 
     @AssertTrue(message = "Такой целевой валюты не существует")
     public boolean isToCurrency() {
-        return CurrencyUtils.getCurrency(toCurrency) != null;
+        return toCurrency != null && CurrencyUtils.getCurrency(toCurrency) != null;
     }
 
     @AssertTrue(message = "Сумма для конвертации должна быть больше 0!")
     public boolean isAmount() {
-        return amount.compareTo(BigDecimal.ZERO) > 0;
+        return amount != null && amount.compareTo(BigDecimal.ZERO) > 0;
     }
 }
