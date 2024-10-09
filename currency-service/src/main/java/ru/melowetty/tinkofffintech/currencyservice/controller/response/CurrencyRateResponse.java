@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Currency;
 
 @Data
@@ -14,5 +15,5 @@ public class CurrencyRateResponse {
     public Currency currency;
 
     @Schema(description = "Курс валюты по отношению к рублю", example = "10.5")
-    public float rate;
+    public BigDecimal rate;
 }

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import ru.melowetty.tinkofffintech.currencyservice.util.CurrencyUtils;
 
+import java.math.BigDecimal;
 import java.util.Currency;
 
 @Data
@@ -28,7 +29,7 @@ public class CurrencyConvertRequest {
 
     @Schema(description = "Сумма изначальной валюты", example = "100.50")
     @NotNull
-    public float amount;
+    public BigDecimal amount;
 
     @AssertTrue(message = "Такой исходной валюты не существует")
     public boolean checkFromCurrency() {
@@ -42,6 +43,6 @@ public class CurrencyConvertRequest {
 
     @AssertTrue(message = "Сумма для конвертации должна быть больше 0!")
     public boolean checkAmount() {
-        return amount > 0;
+        return amount.compareTo(BigDecimal.ZERO) > 0;
     }
 }

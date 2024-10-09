@@ -1,9 +1,10 @@
 package ru.melowetty.tinkofffintech.currencyservice.service;
 
+import java.math.BigDecimal;
 import java.util.Currency;
 
 public interface CurrencyService {
-    float getCurrencyRate(Currency currency);
+    BigDecimal getCurrencyRate(Currency currency);
 
-    float convertCurrency(Currency fromCurrency, Currency toCurrency, float initialAmount);
+    BigDecimal convertCurrency(Currency fromCurrency, Currency toCurrency, BigDecimal initialAmount);
 }

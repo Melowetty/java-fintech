@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Currency;
 
 @Data
@@ -17,5 +18,5 @@ public class CurrencyConvertResponse {
     public Currency toCurrency;
 
     @Schema(description = "Сконвертированная сумма в итоговой валюте", example = "10.1")
-    public float convertedAmount;
+    public BigDecimal convertedAmount;
 }
