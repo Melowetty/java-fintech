@@ -5,6 +5,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import ru.melowetty.tinkofffintech.currencyservice.exception.CentralBankServiceUnavailableException;
@@ -32,9 +33,8 @@ public class CentralBankCurrencyService implements CurrencyService {
     }
 
     @Override
+    @Cacheable("currency-rate")
     public BigDecimal getCurrencyRate(Currency currency) {
-
-
         CurrencyRate rate = getCurrenciesRate().stream()
                 .filter((currencyRate) -> currencyRate.currency.equals(currency))
                 .findFirst().orElseThrow(() -> new CurrencyNotFoundAtCentralBankException(currency));
@@ -43,6 +43,7 @@ public class CentralBankCurrencyService implements CurrencyService {
     }
 
     @Override
+    @Cacheable("currency-rates")
     public List<CurrencyRate> getCurrenciesRate() {
         var params = new HashMap<String, String>();
 
