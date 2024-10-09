@@ -34,4 +34,30 @@ public class CurrencyConverterServiceTest {
         Assertions.assertEquals(expected, actual);
 
     }
+
+    @Test
+    public void convertingToNonRubCurrency() {
+        var fromCurrency = Currency.getInstance("RUB");
+        var toCurrency = Currency.getInstance("USD");
+        var amount = BigDecimal.valueOf(100);
+
+        Mockito.when(currencyService.getCurrencyRate(toCurrency)).thenReturn(BigDecimal.valueOf(80));
+
+        BigDecimal actual = currencyConverterService.convertCurrency(fromCurrency, toCurrency, amount);
+        BigDecimal expected = BigDecimal.valueOf(1.25);
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void convertingFromAndToRubCurrency() {
+        var fromCurrency = Currency.getInstance("RUB");
+        var toCurrency = Currency.getInstance("RUB");
+        var amount = BigDecimal.valueOf(100);
+
+        BigDecimal actual = currencyConverterService.convertCurrency(fromCurrency, toCurrency, amount);
+        BigDecimal expected = BigDecimal.valueOf(100);
+
+        Assertions.assertEquals(expected, actual);
+    }
 }

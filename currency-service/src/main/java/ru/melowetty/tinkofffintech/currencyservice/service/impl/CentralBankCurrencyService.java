@@ -46,6 +46,9 @@ public class CentralBankCurrencyService implements CurrencyService {
     }
 
     public BigDecimal fallbackCurrencyRate(Currency currency, Exception e) {
+        if (e instanceof CurrencyNotFoundAtCentralBankException) {
+            throw (CurrencyNotFoundAtCentralBankException) e;
+        }
         throw new CentralBankServiceUnavailableException();
     }
 
