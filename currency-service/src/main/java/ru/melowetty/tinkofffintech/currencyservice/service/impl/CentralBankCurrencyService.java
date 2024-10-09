@@ -59,14 +59,7 @@ public class CentralBankCurrencyService implements CurrencyService {
     @Cacheable(value = "currency-rates")
     @CircuitBreaker(name = serviceName, fallbackMethod = "fallbackCurrencyRates")
     public List<CurrencyRate> getCurrenciesRate() {
-        var params = new HashMap<String, String>();
-
-        var currentDate = LocalDate.now(ZoneOffset.ofHours(2).normalized());
-        var formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-        params.put("data_req", formatter.format(currentDate));
-
-        var response = restTemplate.getForEntity(baseUrl + "/scripts/XML_daily.asp", CentralBankCurrencyRate[].class, params);
+        var response = restTemplate.getForEntity(baseUrl + "/scripts/XML_daily.asp", CentralBankCurrencyRate[].class);
 
         if (response.getStatusCode().is5xxServerError()) {
             throw new CentralBankServiceUnavailableException();
