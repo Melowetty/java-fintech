@@ -3,6 +3,7 @@ package ru.melowetty.tinkofffintech.currencyservice.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.coyote.BadRequestException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,21 +13,36 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.melowetty.tinkofffintech.currencyservice.controller.request.CurrencyConvertRequest;
 import ru.melowetty.tinkofffintech.currencyservice.controller.response.CurrencyConvertResponse;
 import ru.melowetty.tinkofffintech.currencyservice.controller.response.CurrencyRateResponse;
+import ru.melowetty.tinkofffintech.currencyservice.service.CurrencyService;
+import ru.melowetty.tinkofffintech.currencyservice.util.CurrencyUtils;
 
 @RestController
 @Tag(name = "Сервис конвертации валют")
 @RequestMapping("/currencies")
 public class CurrenciesController {
+    private final CurrencyService currencyService;
+
+    public CurrenciesController(CurrencyService currencyService) {
+        this.currencyService = currencyService;
+    }
 
     @GetMapping("/rates/{code}")
     @Operation(summary = "Получение курса валюты по её коду")
     public CurrencyRateResponse getCurrencyRate(@PathVariable @Parameter(name = "Код валюты") String code) {
-        return null;
+        var currency = CurrencyUtils.getCurrency(code);
+        if (currency == null)
+            throw new IllegalArgumentException("Такой валюты не существует");
+
+        float rate = currencyService.getCurrencyRate(currency);
+        return new CurrencyRateResponse(currency, rate);
     }
 
     @PostMapping("/convert")
     @Operation(summary = "Конвертировать одну валюту в другую")
     public CurrencyConvertResponse convertCurrency(@RequestBody CurrencyConvertRequest request) {
-        return null;
+        var fromCurrency = CurrencyUtils.getCurrency(request.fromCurrency);
+        var toCurrency = CurrencyUtils.getCurrency(request.toCurrency);
+        float amount = currencyService.convertCurrency(fromCurrency, toCurrency, request.amount);
+        return new CurrencyConvertResponse(fromCurrency, toCurrency, amount);
     }
 }

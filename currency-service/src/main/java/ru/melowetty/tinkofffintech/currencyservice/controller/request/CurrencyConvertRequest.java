@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import ru.melowetty.tinkofffintech.currencyservice.util.CurrencyUtils;
 
 import java.util.Currency;
 
@@ -31,25 +32,16 @@ public class CurrencyConvertRequest {
 
     @AssertTrue(message = "Такой исходной валюты не существует")
     public boolean checkFromCurrency() {
-        return checkCurrency(fromCurrency);
+        return CurrencyUtils.getCurrency(fromCurrency) != null;
     }
 
     @AssertTrue(message = "Такой целевой валюты не существует")
     public boolean checkToCurrency() {
-        return checkCurrency(toCurrency);
+        return CurrencyUtils.getCurrency(toCurrency) != null;
     }
 
     @AssertTrue(message = "Сумма для конвертации должна быть больше 0!")
     public boolean checkAmount() {
         return amount > 0;
-    }
-
-    public boolean checkCurrency(String targetCurrency) {
-        try {
-            var currency = Currency.getInstance(targetCurrency);
-            return currency != null;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
     }
 }
