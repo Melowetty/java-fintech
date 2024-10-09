@@ -1,6 +1,7 @@
 package ru.melowetty.tinkofffintech.currencyservice.controller.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.AssertFalse;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -10,7 +11,6 @@ import org.hibernate.validator.constraints.Length;
 import ru.melowetty.tinkofffintech.currencyservice.util.CurrencyUtils;
 
 import java.math.BigDecimal;
-import java.util.Currency;
 
 @Data
 @AllArgsConstructor
@@ -18,31 +18,31 @@ import java.util.Currency;
 @Schema(description = "Запрос на конвертацию валюты")
 public class CurrencyConvertRequest {
     @Schema(description = "Из какой валюты конвертировать в виде кода", example = "USD")
-    @NotNull
+    @NotNull(message = "Поле не должно быть пустым")
     @Length(min = 3, max = 3, message = "Длина кода валюты должна быть равна 3")
     public String fromCurrency;
 
     @Schema(description = "В какую валюту конвертировать в виде кода", example = "RUB")
-    @NotNull
+    @NotNull(message = "Поле не должно быть пустым")
     @Length(min = 3, max = 3, message = "Длина кода валюты должна быть равна 3")
     public String toCurrency;
 
     @Schema(description = "Сумма изначальной валюты", example = "100.50")
-    @NotNull
+    @NotNull(message = "Поле не должно быть пустым")
     public BigDecimal amount;
 
     @AssertTrue(message = "Такой исходной валюты не существует")
-    public boolean checkFromCurrency() {
+    public boolean isFromCurrency() {
         return CurrencyUtils.getCurrency(fromCurrency) != null;
     }
 
     @AssertTrue(message = "Такой целевой валюты не существует")
-    public boolean checkToCurrency() {
+    public boolean isToCurrency() {
         return CurrencyUtils.getCurrency(toCurrency) != null;
     }
 
     @AssertTrue(message = "Сумма для конвертации должна быть больше 0!")
-    public boolean checkAmount() {
+    public boolean isAmount() {
         return amount.compareTo(BigDecimal.ZERO) > 0;
     }
 }

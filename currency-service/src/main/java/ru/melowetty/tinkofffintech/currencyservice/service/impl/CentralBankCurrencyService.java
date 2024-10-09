@@ -59,7 +59,7 @@ public class CentralBankCurrencyService implements CurrencyService {
         }
 
         if (response.getBody() == null) {
-            throw new RuntimeException("Произошла ошибка во время парсинга ответа от центробанка");
+            throw new RuntimeException("Произошла ошибка во время обработки ответа от центробанка");
         }
 
         return Arrays.stream(response.getBody())
