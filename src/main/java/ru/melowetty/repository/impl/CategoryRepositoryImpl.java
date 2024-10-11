@@ -13,7 +13,7 @@ public class CategoryRepositoryImpl extends BaseRepositoryImpl<Category, Integer
     }
 
     @Override
-    Integer getIndexFromEntity(Category entity) {
+    protected Integer getIndexFromEntity(Category entity) {
         return entity.getId();
     }
 }
