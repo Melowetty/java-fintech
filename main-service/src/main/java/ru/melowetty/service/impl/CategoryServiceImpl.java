@@ -1,10 +1,8 @@
 package ru.melowetty.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import ru.melowetty.annotation.Timed;
@@ -24,15 +22,20 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryEventManager eventManager;
+    private final CategoryTransactionService transactionService;
+    private final InitCommand initCommand;
 
-    @Autowired
-    @Qualifier("category_init")
-    @Lazy
-    private InitCommand initCommand;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryEventManager eventManager) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository,
+                               CategoryEventManager eventManager,
+                               CategoryTransactionService transactionService,
+                               @Qualifier("category_init")
+                               InitCommand initCommand
+    ) {
         this.categoryRepository = categoryRepository;
         this.eventManager = eventManager;
+        this.transactionService = transactionService;
+        this.initCommand = initCommand;
         log.info("CategoryServiceImpl created");
     }
 
@@ -57,12 +60,17 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category createCategory(String slug, String name) {
-        var category = new Category();
-        category.setName(name);
-        category.setSlug(slug);
-        var newCategory = categoryRepository.create(category);
-        eventManager.notify(EventType.CREATED, newCategory);
-        return newCategory;
+        try {
+            var category = new Category();
+            category.setName(name);
+            category.setSlug(slug);
+            var newCategory = categoryRepository.create(category);
+            eventManager.notify(EventType.CREATED, newCategory);
+            return newCategory;
+        } catch (RuntimeException e) {
+            transactionService.rollback();
+            return null;
+        }
     }
 
     @Override

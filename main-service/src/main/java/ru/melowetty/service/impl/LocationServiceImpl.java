@@ -1,10 +1,8 @@
 package ru.melowetty.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import ru.melowetty.annotation.Timed;
@@ -24,17 +22,19 @@ import java.util.List;
 public class LocationServiceImpl implements LocationService {
     private final LocationRepository locationRepository;
     private final LocationEventManager eventManager;
-
-    @Qualifier("location_init")
-    @Autowired
-    @Lazy
-    private InitCommand initCommand;
+    private final LocationTransactionService transactionService;
+    private final InitCommand initCommand;
 
     public LocationServiceImpl(
-            LocationRepository locationRepository, LocationEventManager eventManager
+            LocationRepository locationRepository, LocationEventManager eventManager,
+            LocationTransactionService transactionService,
+            @Qualifier("location_init")
+            InitCommand initCommand
     ) {
         this.locationRepository = locationRepository;
         this.eventManager = eventManager;
+        this.transactionService = transactionService;
+        this.initCommand = initCommand;
         log.info("LocationServiceImpl created");
     }
 
@@ -60,12 +60,17 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public Location createLocation(String slug, String name) {
-        var location = new Location();
-        location.setName(name);
-        location.setSlug(slug);
-        var newLocation = locationRepository.create(location);
-        eventManager.notify(EventType.CREATED, newLocation);
-        return newLocation;
+        try {
+            var location = new Location();
+            location.setName(name);
+            location.setSlug(slug);
+            var newLocation = locationRepository.create(location);
+            eventManager.notify(EventType.CREATED, newLocation);
+            return newLocation;
+        } catch (RuntimeException e) {
+            transactionService.rollback();
+            return null;
+        }
     }
 
     @Override

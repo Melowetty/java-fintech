@@ -2,7 +2,7 @@ package ru.melowetty.repository;
 
 import java.util.List;
 
-public interface BaseRepository<E, I> {
+public interface BaseRepository<E, I> extends Backupable {
     E create(E entity);
 
     void removeById(I id);

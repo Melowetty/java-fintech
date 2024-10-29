@@ -6,15 +6,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ru.melowetty.command.InitCommand;
 import ru.melowetty.controller.request.CategoryPutRequest;
+import ru.melowetty.event.impl.CategoryEventManager;
 import ru.melowetty.exception.EntityNotFoundException;
 import ru.melowetty.model.Category;
 import ru.melowetty.repository.CategoryRepository;
 import ru.melowetty.service.impl.CategoryServiceImpl;
+import ru.melowetty.service.impl.CategoryTransactionService;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
@@ -23,20 +27,22 @@ public class CategoryServiceImplTest {
     private CategoryServiceImpl categoryService;
 
     @Mock
-    private KudagoService kudagoService;
+    private CategoryRepository categoryRepository;
 
     @Mock
-    private CategoryRepository categoryRepository;
+    private CategoryTransactionService transactionService;
+
+    @Mock
+    private CategoryEventManager categoryEventManager;
+
+    @Mock
+    private InitCommand initCommand;
 
     @Test
     public void test_initialize() {
-        Mockito.when(kudagoService.getCategories()).thenReturn(getCategories());
-
         categoryService.initialize();
 
-        Mockito.verify(categoryRepository, Mockito.times(1)).create(getCategories().get(0));
-        Mockito.verify(categoryRepository, Mockito.times(1)).create(getCategories().get(1));
-        Mockito.verify(categoryRepository, Mockito.times(1)).create(getCategories().get(2));
+        Mockito.verify(initCommand, Mockito.times(1)).execute();
     }
 
     @Test
@@ -82,6 +88,17 @@ public class CategoryServiceImplTest {
 
         assertEquals(slug, result.getSlug());
         assertEquals(name, result.getName());
+    }
+
+    @Test
+    public void createCategory_rollback_when_save_throws_exception() {
+        Mockito.when(categoryRepository.create(Mockito.any(Category.class))).thenThrow(RuntimeException.class);
+
+        var category = categoryService.createCategory("test", "test");
+
+        assertNull(category);
+
+        Mockito.verify(transactionService, Mockito.times(1)).rollback();
     }
 
     @Test

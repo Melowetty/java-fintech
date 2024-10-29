@@ -6,15 +6,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import ru.melowetty.command.InitCommand;
 import ru.melowetty.controller.request.LocationPutRequest;
+import ru.melowetty.event.impl.LocationEventManager;
 import ru.melowetty.exception.EntityNotFoundException;
 import ru.melowetty.model.Location;
 import ru.melowetty.repository.LocationRepository;
 import ru.melowetty.service.impl.LocationServiceImpl;
+import ru.melowetty.service.impl.LocationTransactionService;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LocationServiceImplTest {
@@ -23,7 +27,13 @@ public class LocationServiceImplTest {
     private LocationRepository locationRepository;
 
     @Mock
-    private KudagoService kudagoService;
+    private LocationTransactionService transactionService;
+
+    @Mock
+    private LocationEventManager eventManager;
+
+    @Mock
+    private InitCommand command;
 
     @InjectMocks
     private LocationServiceImpl locationService;
@@ -35,11 +45,9 @@ public class LocationServiceImplTest {
 
     @Test
     public void initialize_createsAllLocations() {
-        Mockito.when(kudagoService.getLocations()).thenReturn(getLocations());
-
         locationService.initialize();
 
-        Mockito.verify(locationRepository, Mockito.times(3)).create(Mockito.any(Location.class));
+        Mockito.verify(command, Mockito.times(1)).execute();
     }
 
     @Test
@@ -85,6 +93,17 @@ public class LocationServiceImplTest {
 
         assertEquals(slug, result.getSlug());
         assertEquals(name, result.getName());
+    }
+
+    @Test
+    public void createLocation_rollback_when_save_throws_exception() {
+        Mockito.when(locationRepository.create(Mockito.any(Location.class))).thenThrow(RuntimeException.class);
+
+        var location = locationService.createLocation("test", "test");
+
+        assertNull(location);
+
+        Mockito.verify(transactionService, Mockito.times(1)).rollback();
     }
 
     @Test
