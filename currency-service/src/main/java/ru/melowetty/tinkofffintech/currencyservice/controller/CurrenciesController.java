@@ -47,8 +47,9 @@ public class CurrenciesController {
             })
     public CurrencyRateResponse getCurrencyRate(@PathVariable @Parameter(name = "code", required = true, description = "Код валюты", example = "USD") String code) {
         var currency = CurrencyUtils.getCurrency(code);
-        if (currency == null)
+        if (currency == null) {
             throw new IllegalArgumentException("Такой валюты не существует");
+        }
 
         BigDecimal rate = currencyService.getCurrencyRate(currency);
 
