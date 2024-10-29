@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import ru.melowetty.annotation.Timed;
 import ru.melowetty.command.InitCommand;
 import ru.melowetty.controller.request.CategoryPutRequest;
+import ru.melowetty.event.EventType;
+import ru.melowetty.event.impl.CategoryEventManager;
 import ru.melowetty.exception.EntityNotFoundException;
 import ru.melowetty.model.Category;
 import ru.melowetty.repository.CategoryRepository;
@@ -21,14 +23,16 @@ import java.util.List;
 @Slf4j
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
+    private final CategoryEventManager eventManager;
 
     @Autowired
     @Qualifier("category_init")
     @Lazy
     private InitCommand initCommand;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryEventManager eventManager) {
         this.categoryRepository = categoryRepository;
+        this.eventManager = eventManager;
         log.info("CategoryServiceImpl created");
     }
 
@@ -56,7 +60,9 @@ public class CategoryServiceImpl implements CategoryService {
         var category = new Category();
         category.setName(name);
         category.setSlug(slug);
-        return categoryRepository.create(category);
+        var newCategory = categoryRepository.create(category);
+        eventManager.notify(EventType.CREATED, newCategory);
+        return newCategory;
     }
 
     @Override
@@ -68,7 +74,9 @@ public class CategoryServiceImpl implements CategoryService {
         category.setId(id);
         category.setSlug(request.slug);
         category.setName(request.name);
-        return categoryRepository.update(category);
+        var newCategory = categoryRepository.update(category);
+        eventManager.notify(EventType.CHANGED, newCategory);
+        return newCategory;
     }
 
     @Override
@@ -77,6 +85,8 @@ public class CategoryServiceImpl implements CategoryService {
             throw new EntityNotFoundException("Категория с таким идентификатором не найдена!");
         }
 
+        var category = getCategoryById(id);
         categoryRepository.removeById(id);
+        eventManager.notify(EventType.DELETED, category);
     }
 }

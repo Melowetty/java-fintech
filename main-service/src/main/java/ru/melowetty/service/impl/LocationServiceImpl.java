@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import ru.melowetty.annotation.Timed;
 import ru.melowetty.command.InitCommand;
 import ru.melowetty.controller.request.LocationPutRequest;
+import ru.melowetty.event.EventType;
+import ru.melowetty.event.impl.LocationEventManager;
 import ru.melowetty.exception.EntityNotFoundException;
 import ru.melowetty.model.Location;
 import ru.melowetty.repository.LocationRepository;
@@ -21,6 +23,7 @@ import java.util.List;
 @Slf4j
 public class LocationServiceImpl implements LocationService {
     private final LocationRepository locationRepository;
+    private final LocationEventManager eventManager;
 
     @Qualifier("location_init")
     @Autowired
@@ -28,9 +31,10 @@ public class LocationServiceImpl implements LocationService {
     private InitCommand initCommand;
 
     public LocationServiceImpl(
-            LocationRepository locationRepository
+            LocationRepository locationRepository, LocationEventManager eventManager
     ) {
         this.locationRepository = locationRepository;
+        this.eventManager = eventManager;
         log.info("LocationServiceImpl created");
     }
 
@@ -59,7 +63,9 @@ public class LocationServiceImpl implements LocationService {
         var location = new Location();
         location.setName(name);
         location.setSlug(slug);
-        return locationRepository.create(location);
+        var newLocation = locationRepository.create(location);
+        eventManager.notify(EventType.CREATED, newLocation);
+        return newLocation;
     }
 
     @Override
@@ -71,7 +77,9 @@ public class LocationServiceImpl implements LocationService {
         var location = new Location();
         location.setSlug(slug);
         location.setName(request.name);
-        return locationRepository.update(location);
+        var newLocation = locationRepository.update(location);
+        eventManager.notify(EventType.CHANGED, newLocation);
+        return newLocation;
     }
 
     @Override
@@ -79,7 +87,8 @@ public class LocationServiceImpl implements LocationService {
         if (!locationRepository.existsById(slug)) {
             throw new EntityNotFoundException("Локация с таким идентификатором не найдена!");
         }
-
+        var location = getLocationBySlug(slug);
         locationRepository.removeById(slug);
+        eventManager.notify(EventType.DELETED, location);
     }
 }
