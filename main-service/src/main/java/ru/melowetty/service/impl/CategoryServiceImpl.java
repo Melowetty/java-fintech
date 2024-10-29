@@ -1,16 +1,19 @@
 package ru.melowetty.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import ru.melowetty.annotation.Timed;
+import ru.melowetty.command.InitCommand;
 import ru.melowetty.controller.request.CategoryPutRequest;
 import ru.melowetty.exception.EntityNotFoundException;
 import ru.melowetty.model.Category;
 import ru.melowetty.repository.CategoryRepository;
 import ru.melowetty.service.CategoryService;
-import ru.melowetty.service.KudagoService;
 
 import java.util.List;
 
@@ -18,23 +21,21 @@ import java.util.List;
 @Slf4j
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
-    private final KudagoService kudagoService;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, KudagoService kudagoService) {
+    @Autowired
+    @Qualifier("category_init")
+    @Lazy
+    private InitCommand initCommand;
+
+    public CategoryServiceImpl(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
-        this.kudagoService = kudagoService;
         log.info("CategoryServiceImpl created");
     }
 
     @EventListener(ApplicationReadyEvent.class)
     @Timed
     public void initialize() {
-        log.info("Инициализация категорий запущена");
-        var categories = kudagoService.getCategories();
-        for (var category : categories) {
-            categoryRepository.create(category);
-        }
-        log.info("Инициализация категорий окончена, теперь категорий: {}", categoryRepository.findAll().size());
+        initCommand.execute();
     }
 
     @Override
