@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -20,16 +21,19 @@ import java.util.concurrent.Semaphore;
 public class KudagoServiceImpl implements KudagoService {
     private final RestTemplate restTemplate;
     private final Semaphore semaphore;
+    private final RetryTemplate retryTemplate;
 
     @Value("${api.kudago.base-path}")
     private String BASE_URL;
 
     public KudagoServiceImpl(
             RestTemplate restTemplate,
-                             @Qualifier("kudago_semaphore")
-                             Semaphore semaphore) {
+            @Qualifier("kudago_semaphore")
+                             Semaphore semaphore,
+            RetryTemplate retryTemplate) {
         this.restTemplate = restTemplate;
         this.semaphore = semaphore;
+        this.retryTemplate = retryTemplate;
     }
 
     @Override
@@ -37,8 +41,8 @@ public class KudagoServiceImpl implements KudagoService {
         try {
             semaphore.acquire();
 
-            var response = restTemplate.getForObject(BASE_URL + "/place-categories/",
-                    KudagoCategoryResponse[].class);
+            var response = retryTemplate.execute(context -> restTemplate.getForObject(BASE_URL + "/place-categories/",
+                    KudagoCategoryResponse[].class));
 
             if (response == null) {
                 throw new RestClientException("Ответ от Kudago API пустой");
@@ -64,7 +68,8 @@ public class KudagoServiceImpl implements KudagoService {
         try {
             semaphore.acquire();
 
-            var response = restTemplate.getForObject(BASE_URL + "/locations/", KudagoLocationResponse[].class);
+            var response = retryTemplate.execute(context ->
+                    restTemplate.getForObject(BASE_URL + "/locations/", KudagoLocationResponse[].class));
 
             if (response == null) {
                 throw new RestClientException("Ответ от Kudago API пустой");
