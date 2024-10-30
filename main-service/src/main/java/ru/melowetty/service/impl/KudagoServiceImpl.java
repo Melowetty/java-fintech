@@ -2,6 +2,7 @@ package ru.melowetty.service.impl;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -12,21 +13,30 @@ import ru.melowetty.service.KudagoService;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 @Service
 @Slf4j
 public class KudagoServiceImpl implements KudagoService {
     private final RestTemplate restTemplate;
+    private final Semaphore semaphore;
+
     @Value("${api.kudago.base-path}")
     private String BASE_URL;
 
-    public KudagoServiceImpl(RestTemplate restTemplate) {
+    public KudagoServiceImpl(
+            RestTemplate restTemplate,
+                             @Qualifier("kudago_semaphore")
+                             Semaphore semaphore) {
         this.restTemplate = restTemplate;
+        this.semaphore = semaphore;
     }
 
     @Override
     public List<Category> getCategories() {
         try {
+            semaphore.acquire();
+
             var response = restTemplate.getForObject(BASE_URL + "/place-categories/",
                     KudagoCategoryResponse[].class);
 
@@ -41,8 +51,10 @@ public class KudagoServiceImpl implements KudagoService {
 
                 return category;
             }).toList();
-        } catch (RestClientException e) {
+        } catch (RestClientException | InterruptedException e) {
             log.error("Произошла ошибка во время получения данных о категориях из Kudago API", e);
+        } finally {
+            semaphore.release();
         }
         return List.of();
     }
@@ -50,6 +62,8 @@ public class KudagoServiceImpl implements KudagoService {
     @Override
     public List<Location> getLocations() {
         try {
+            semaphore.acquire();
+
             var response = restTemplate.getForObject(BASE_URL + "/locations/", KudagoLocationResponse[].class);
 
             if (response == null) {
@@ -63,8 +77,10 @@ public class KudagoServiceImpl implements KudagoService {
 
                 return location;
             }).toList();
-        } catch (RestClientException e) {
+        } catch (RestClientException | InterruptedException e) {
             log.error("Произошла ошибка во время получения данных о городах из Kudago API", e);
+        } finally {
+            semaphore.release();
         }
         return List.of();
     }
