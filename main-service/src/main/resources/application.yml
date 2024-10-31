@@ -8,3 +8,4 @@ api:
   kudago:
     base-path: https://kudago.com/public-api/v1.4
     max-threads: 5
+    initialize-threads: 3
