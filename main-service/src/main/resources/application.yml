@@ -10,3 +10,5 @@ api:
     max-threads: 5
     initialize-threads: 3
     init-data-rate: PT1H
+  currency-service:
+    base-path: localhost:8081
