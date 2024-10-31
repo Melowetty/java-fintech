@@ -3,12 +3,15 @@ package ru.melowetty.config;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.testcontainers.shaded.com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Component
 public class MultiThreadingConfig {
@@ -29,6 +32,15 @@ public class MultiThreadingConfig {
     public ExecutorService initCommandExecutors() {
         return Executors.newFixedThreadPool(
                 initializeThreads,
-                new ThreadFactoryBuilder().setNameFormat("init-data-thread-%d").build());
+                new ThreadFactoryBuilder().setNameFormat("init-data-%d").build());
+    }
+
+    @Bean
+    @Qualifier("scheduled_init_command_threads")
+    public ScheduledExecutorService scheduledInitDataExecutors() {
+        return Executors.newScheduledThreadPool(
+                3,
+                new ThreadFactoryBuilder().setNameFormat("scheduled-init-data-%d").build()
+        );
     }
 }
