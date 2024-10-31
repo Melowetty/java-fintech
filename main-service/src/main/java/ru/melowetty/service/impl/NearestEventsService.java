@@ -18,6 +18,7 @@ import java.util.concurrent.CompletableFuture;
 public class NearestEventsService {
     private final CurrencyService currencyService;
     private final KudagoService kudagoService;
+    private final int MAX_PAGE_COUNT = 5;
 
     public NearestEventsService(CurrencyService currencyService, KudagoService kudagoService) {
         this.currencyService = currencyService;
@@ -34,12 +35,17 @@ public class NearestEventsService {
                 log.info("Получение событий на странице {}", currentPage);
                 result = kudagoService.getEvents(from, to, currentPage);
                 currentPage += 1;
+                if (currentPage == MAX_PAGE_COUNT) break;
                 events.addAll(result);
             } while (!result.isEmpty());
             return events;
         });
 
-        var completableFutureBudget = CompletableFuture.supplyAsync(() -> currencyService.getConvertedAmount(currency));
+        var completableFutureBudget = CompletableFuture.supplyAsync(() ->  {
+            log.info("Получение сконвертированного бюджета");
+            return currencyService.getConvertedAmount(currency, budget);
+
+        });
 
         var result = new CompletableFuture<List<Event>>();
 
@@ -50,7 +56,12 @@ public class NearestEventsService {
                     .filter((event) -> !(event.price == null))
                     .filter((event) -> convertedBudget.compareTo(event.price) >= 0)
                     .toList());
-        });
+        }).exceptionally((e) -> {
+            log.error("Произошла ошибка во время получения данных", e);
+                    result.completeExceptionally(e);
+                    return null;
+                }
+        );
 
         return result;
     }
