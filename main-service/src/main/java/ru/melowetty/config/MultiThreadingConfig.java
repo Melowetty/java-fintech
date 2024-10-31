@@ -7,6 +7,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.testcontainers.shaded.com.google.common.util.concurrent.ThreadFactoryBuilder;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -25,6 +26,17 @@ public class MultiThreadingConfig {
     @Qualifier("kudago_semaphore")
     public Semaphore kudagoSemaphore() {
         return new Semaphore(kudagoMaxActiveThreadsCount);
+    }
+
+    @Bean(name = "asyncExecutor")
+    public Executor asyncExecutor() {
+        var executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(10);
+        executor.setQueueCapacity(100);
+        executor.setThreadNamePrefix("async-executor-");
+        executor.initialize();
+        return executor;
     }
 
     @Bean
