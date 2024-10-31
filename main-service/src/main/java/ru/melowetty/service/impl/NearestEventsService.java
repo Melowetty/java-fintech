@@ -25,7 +25,6 @@ public class NearestEventsService {
         this.kudagoService = kudagoService;
     }
 
-    @Async("asyncExecutor")
     public CompletableFuture<List<Event>> getEventsByBudgetFuture(BigDecimal budget, Currency currency, LocalDate from, LocalDate to) {
         var completableFutureEvents = CompletableFuture.supplyAsync(() -> {
             List<Event> events = new ArrayList<>();
