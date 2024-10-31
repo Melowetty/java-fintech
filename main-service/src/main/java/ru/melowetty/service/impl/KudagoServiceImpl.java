@@ -98,6 +98,7 @@ public class KudagoServiceImpl implements KudagoService {
         return List.of();
     }
 
+    @Override
     public List<Event> getEvents(LocalDate dateFrom, LocalDate dateTo, int page) {
         try {
             semaphore.acquire();

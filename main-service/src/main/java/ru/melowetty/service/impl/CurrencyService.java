@@ -23,7 +23,7 @@ public class CurrencyService {
         this.restTemplate = restTemplate;
     }
 
-    public BigDecimal getCurrencyRate(Currency currency) {
+    public BigDecimal getConvertedAmount(Currency currency) {
         try {
             var url = BASE_PATH + "/rates/" + currency.getCurrencyCode();
             var response = retryTemplate.execute(context ->
