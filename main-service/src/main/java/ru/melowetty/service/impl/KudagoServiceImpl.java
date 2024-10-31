@@ -1,26 +1,34 @@
 package ru.melowetty.service.impl;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import ru.melowetty.model.Category;
 import ru.melowetty.model.Event;
 import ru.melowetty.model.Location;
 import ru.melowetty.service.KudagoService;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -102,17 +110,20 @@ public class KudagoServiceImpl implements KudagoService {
     public List<Event> getEvents(LocalDate dateFrom, LocalDate dateTo, int page) {
         try {
             semaphore.acquire();
-
             var variables = new HashMap<String, String>();
-            variables.put("actual_since", dateFrom.toString());
-            variables.put("actual_until", dateTo.toString());
-            variables.put("page", String.valueOf(page));
-            variables.put("page_size", "100");
-            variables.put("text_format", "text");
-            variables.put("fields", "id,title,price,is_free,dates");
+
+            String urlTemplate = UriComponentsBuilder.fromHttpUrl(BASE_URL + "/events")
+                    .queryParam("actual_since", dateFrom.atStartOfDay().toInstant(ZoneOffset.ofHours(2)).getEpochSecond())
+                    .queryParam("actual_until", dateTo.atStartOfDay().toInstant(ZoneOffset.ofHours(2)).getEpochSecond())
+                    .queryParam("page", page)
+                    .queryParam("page_size", 100)
+                    .queryParam("text_format", "text")
+                    .queryParam("fields", "id,title,price,is_free,dates")
+                    .encode()
+                    .toUriString();
 
             var response = retryTemplate.execute(context ->
-                    restTemplate.getForObject(BASE_URL + "/events", PagedKudagoEventsResponse.class, variables));
+                    restTemplate.getForObject(urlTemplate, PagedKudagoEventsResponse.class, variables));
 
             if (response == null) {
                 throw new RestClientException("Ответ от Kudago API пустой");
@@ -130,7 +141,7 @@ public class KudagoServiceImpl implements KudagoService {
             }).toList();
 
 
-        } catch (RestClientException | InterruptedException e) {
+        } catch (RuntimeException | InterruptedException e) {
             log.error("Произошла ошибка во время получения данных об событиях из Kudago API", e);
         } finally {
             semaphore.release();
@@ -177,6 +188,7 @@ public class KudagoServiceImpl implements KudagoService {
 
         public boolean isFree;
 
+        @JsonProperty("dates")
         public List<KudagoDate> dates;
     }
 

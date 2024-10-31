@@ -11,4 +11,4 @@ api:
     initialize-threads: 3
     init-data-rate: PT1H
   currency-service:
-    base-path: localhost:8081
+    base-path: http://localhost:8081

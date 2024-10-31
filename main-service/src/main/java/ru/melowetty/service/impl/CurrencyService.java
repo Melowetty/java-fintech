@@ -9,6 +9,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.util.Currency;
+import java.util.HashMap;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -23,11 +25,18 @@ public class CurrencyService {
         this.restTemplate = restTemplate;
     }
 
-    public BigDecimal getConvertedAmount(Currency currency) {
+    public BigDecimal getConvertedAmount(Currency currency, BigDecimal budget) {
+        if (Objects.equals(budget, BigDecimal.ZERO)) return BigDecimal.ZERO;
         try {
-            var url = BASE_PATH + "/rates/" + currency.getCurrencyCode();
+            var url = BASE_PATH + "/currencies/convert";
+            var request = new HashMap<String, Object>();
+            request.put("fromCurrency", currency.getCurrencyCode());
+            request.put("toCurrency", "RUB");
+            request.put("amount", budget.toPlainString());
+
             var response = retryTemplate.execute(context ->
-                    restTemplate.getForEntity(url, CurrencyConvertResponse.class));
+                    restTemplate.postForEntity(url, request, CurrencyConvertResponse.class));
+
             if (response.getStatusCode().is2xxSuccessful() && response.hasBody()) {
                 return response.getBody().convertedAmount;
             }
