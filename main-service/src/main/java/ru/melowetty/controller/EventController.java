@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
-import ru.melowetty.model.Event;
+import ru.melowetty.model.EventDto;
 import ru.melowetty.service.impl.NearestEventsService;
 
 import java.math.BigDecimal;
@@ -29,7 +29,7 @@ public class EventController {
     }
 
     @GetMapping("/future")
-    public CompletableFuture<List<Event>> completableFutureGetEventsByBudget(
+    public CompletableFuture<List<EventDto>> completableFutureGetEventsByBudget(
             @NotNull(message = "Не указан бюджет")
                     @RequestParam("budget")
                     @DecimalMin(value = "0.0", message = "Бюджет не должен быть меньше нуля!")
@@ -57,7 +57,7 @@ public class EventController {
     }
 
     @GetMapping("/reactor")
-    public Flux<Event> reactorGetEventsByBudget(
+    public Flux<EventDto> reactorGetEventsByBudget(
             @NotNull(message = "Не указан бюджет")
             @RequestParam("budget")
             @DecimalMin(value = "0.0", message = "Бюджет не должен быть меньше нуля!")
