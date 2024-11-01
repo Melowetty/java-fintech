@@ -7,28 +7,23 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import ru.melowetty.model.Category;
-import ru.melowetty.model.Event;
+import ru.melowetty.model.EventDto;
 import ru.melowetty.model.Location;
 import ru.melowetty.service.KudagoService;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
-import java.time.temporal.ChronoField;
-import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -107,7 +102,7 @@ public class KudagoServiceImpl implements KudagoService {
     }
 
     @Override
-    public List<Event> getEvents(LocalDate dateFrom, LocalDate dateTo, int page) {
+    public List<EventDto> getEvents(LocalDate dateFrom, LocalDate dateTo, int page) {
         try {
             semaphore.acquire();
             var variables = new HashMap<String, String>();
@@ -130,9 +125,9 @@ public class KudagoServiceImpl implements KudagoService {
             }
 
             return response.results.stream().map(event -> {
-                var dates = event.dates.stream().map((date) -> new Event.EventDates(date.start, date.end))
+                var dates = event.dates.stream().map((date) -> new EventDto.EventDates(date.start, date.end))
                         .toList();
-                return Event.builder()
+                return EventDto.builder()
                         .id(event.id)
                         .title(event.title)
                         .price(getPriceOfEvent(event))

@@ -1,7 +1,7 @@
 package ru.melowetty.service;
 
 import ru.melowetty.model.Category;
-import ru.melowetty.model.Event;
+import ru.melowetty.model.EventDto;
 import ru.melowetty.model.Location;
 
 import java.time.LocalDate;
@@ -12,5 +12,5 @@ public interface KudagoService {
 
     List<Location> getLocations();
 
-    List<Event> getEvents(LocalDate dateFrom, LocalDate dateTo, int page);
+    List<EventDto> getEvents(LocalDate dateFrom, LocalDate dateTo, int page);
 }

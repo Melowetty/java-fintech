@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.melowetty.model.Event;
+import ru.melowetty.model.EventDto;
 import ru.melowetty.service.KudagoService;
 
 import java.math.BigDecimal;
@@ -27,10 +27,10 @@ public class NearestEventsService {
         this.kudagoService = kudagoService;
     }
 
-    public CompletableFuture<List<Event>> getEventsByBudgetFuture(BigDecimal budget, Currency currency, LocalDate from, LocalDate to) {
+    public CompletableFuture<List<EventDto>> getEventsByBudgetFuture(BigDecimal budget, Currency currency, LocalDate from, LocalDate to) {
         var completableFutureEvents = CompletableFuture.supplyAsync(() -> {
-            List<Event> events = new ArrayList<>();
-            List<Event> result;
+            List<EventDto> events = new ArrayList<>();
+            List<EventDto> result;
             var currentPage = 1;
             do {
                 log.info("Получение событий на странице {}", currentPage);
@@ -48,7 +48,7 @@ public class NearestEventsService {
 
         });
 
-        var result = new CompletableFuture<List<Event>>();
+        var result = new CompletableFuture<List<EventDto>>();
 
         completableFutureBudget.thenAcceptBoth(completableFutureEvents, (convertedBudget, events) -> {
             log.info("Бюджет – {}, количество ивентов – {}", convertedBudget, events.size());
@@ -67,10 +67,10 @@ public class NearestEventsService {
         return result;
     }
 
-    public Flux<Event> getEventsByBudgetReactor(BigDecimal budget, Currency currency, LocalDate from, LocalDate to) {
+    public Flux<EventDto> getEventsByBudgetReactor(BigDecimal budget, Currency currency, LocalDate from, LocalDate to) {
         var currentPage = new AtomicInteger(1);
-        Flux<Event> fluxEvents = Flux.create(emitter -> {
-            List<Event> result;
+        Flux<EventDto> fluxEvents = Flux.create(emitter -> {
+            List<EventDto> result;
             do {
                 log.info("Получение событий на странице {}", currentPage.get());
                 result = kudagoService.getEvents(from, to, currentPage.get());

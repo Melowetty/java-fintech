@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Event {
+public class EventDto {
     public int id;
 
     public String title;
