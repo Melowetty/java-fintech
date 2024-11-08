@@ -1,0 +1,51 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPattern": "/events?.+",
+        "queryParameters": {
+          "text_format": {
+            "matches": "text"
+          },
+          "page": {
+            "matches": "1"
+          },
+          "page_size": {
+            "matches": "100"
+          },
+          "fields": {
+            "matches": "id,title,price,is_free,dates"
+          },
+          "actual_since": {
+            "matches": "\\d+"
+          },
+          "actual_until": {
+            "matches": "\\d+"
+          }
+        }
+  },
+  "response": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "status": 200,
+    "jsonBody": {
+      "count": 1,
+      "next": "https://kudago.com/public-api/v1.4/events/?fields=id%2Ctitle%2Cprice%2Cis_free%2Cdates&page=2&page_size=100&text_format=text",
+      "previous": null,
+      "results": [
+        {
+          "id": 161043,
+          "dates": [
+            {
+              "start": 1509811200,
+              "end": 1509912000
+            }
+          ],
+          "title": "Фестиваль света",
+          "price": "",
+          "is_free": true
+        }
+      ]
+    }
+  }
+}

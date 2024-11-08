@@ -35,16 +35,6 @@ public class CategoryServiceImplTest {
     @Mock
     private CategoryEventManager categoryEventManager;
 
-    @Mock
-    private InitCommand initCommand;
-
-    @Test
-    public void test_initialize() {
-        categoryService.initialize();
-
-        Mockito.verify(initCommand, Mockito.times(1)).execute();
-    }
-
     @Test
     public void getCategories_returnsAllCategories() {
         List<Category> categories = getCategories();

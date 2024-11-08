@@ -9,6 +9,7 @@ api:
   central-bank:
     url: https://www.cbr.ru
 
+
 resilience4j:
   circuitbreaker:
     instances:
@@ -29,3 +30,4 @@ server:
     encoding:
       force-request: true
       charset: UTF-8
+  port: 8081

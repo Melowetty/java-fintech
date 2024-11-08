@@ -44,13 +44,6 @@ public class LocationServiceImplTest {
     }
 
     @Test
-    public void initialize_createsAllLocations() {
-        locationService.initialize();
-
-        Mockito.verify(command, Mockito.times(1)).execute();
-    }
-
-    @Test
     public void getLocations_returnsAllLocations() {
         List<Location> locations = getLocations();
         Mockito.when(locationRepository.findAll()).thenReturn(locations);

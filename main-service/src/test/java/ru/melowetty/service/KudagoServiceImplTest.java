@@ -13,6 +13,7 @@ import ru.melowetty.model.Category;
 import ru.melowetty.model.Location;
 import ru.melowetty.service.impl.KudagoServiceImpl;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,7 +24,8 @@ public class KudagoServiceImplTest {
     @Container
     static WireMockContainer wireMock = new WireMockContainer("wiremock/wiremock:3.2.0-alpine")
             .withMappingFromResource(KudagoServiceImplTest.class, "locations.json")
-            .withMappingFromResource(KudagoServiceImplTest.class, "categories.json");
+            .withMappingFromResource(KudagoServiceImplTest.class, "categories.json")
+            .withMappingFromResource(KudagoServiceImplTest.class, "events.json");
     @Autowired
     private KudagoServiceImpl kudagoService;
 
@@ -51,5 +53,12 @@ public class KudagoServiceImplTest {
         var expected = List.of(new Category(0, "cafe", "Кафе"), new Category(0, "house", "Дом"));
 
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getEvents_ReturnEvents() {
+        var actual = kudagoService.getEvents(LocalDate.now(), LocalDate.now(), 1);
+
+        assertEquals(1, actual.size());
     }
 }

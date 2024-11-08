@@ -23,25 +23,15 @@ public class LocationServiceImpl implements LocationService {
     private final LocationRepository locationRepository;
     private final LocationEventManager eventManager;
     private final LocationTransactionService transactionService;
-    private final InitCommand initCommand;
 
     public LocationServiceImpl(
             LocationRepository locationRepository, LocationEventManager eventManager,
-            LocationTransactionService transactionService,
-            @Qualifier("location_init")
-            InitCommand initCommand
+            LocationTransactionService transactionService
     ) {
         this.locationRepository = locationRepository;
         this.eventManager = eventManager;
         this.transactionService = transactionService;
-        this.initCommand = initCommand;
         log.info("LocationServiceImpl created");
-    }
-
-    @EventListener(ApplicationReadyEvent.class)
-    @Timed
-    public void initialize() {
-        initCommand.execute();
     }
 
     @Override

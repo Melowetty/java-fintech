@@ -23,26 +23,16 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryEventManager eventManager;
     private final CategoryTransactionService transactionService;
-    private final InitCommand initCommand;
 
 
     public CategoryServiceImpl(CategoryRepository categoryRepository,
                                CategoryEventManager eventManager,
-                               CategoryTransactionService transactionService,
-                               @Qualifier("category_init")
-                               InitCommand initCommand
+                               CategoryTransactionService transactionService
     ) {
         this.categoryRepository = categoryRepository;
         this.eventManager = eventManager;
         this.transactionService = transactionService;
-        this.initCommand = initCommand;
         log.info("CategoryServiceImpl created");
-    }
-
-    @EventListener(ApplicationReadyEvent.class)
-    @Timed
-    public void initialize() {
-        initCommand.execute();
     }
 
     @Override
