@@ -7,3 +7,8 @@ server:
 api:
   kudago:
     base-path: https://kudago.com/public-api/v1.4
+    max-threads: 5
+    initialize-threads: 3
+    init-data-rate: PT1H
+  currency-service:
+    base-path: http://localhost:8081

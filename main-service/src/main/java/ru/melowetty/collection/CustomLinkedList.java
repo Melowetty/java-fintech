@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import static java.lang.reflect.Array.newInstance;
 
@@ -47,6 +48,15 @@ public class CustomLinkedList<T> implements List<T> {
                 T element = current.element;
                 current = current.next;
                 return element;
+            }
+
+            @Override
+            public void forEachRemaining(Consumer<? super T> action) {
+                Objects.requireNonNull(action);
+
+                while (hasNext()) {
+                    action.accept(next());
+                }
             }
         };
     }

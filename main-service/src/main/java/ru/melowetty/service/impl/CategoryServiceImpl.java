@@ -1,16 +1,19 @@
 package ru.melowetty.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import ru.melowetty.annotation.Timed;
+import ru.melowetty.command.InitCommand;
 import ru.melowetty.controller.request.CategoryPutRequest;
+import ru.melowetty.event.EventType;
+import ru.melowetty.event.impl.CategoryEventManager;
 import ru.melowetty.exception.EntityNotFoundException;
 import ru.melowetty.model.Category;
 import ru.melowetty.repository.CategoryRepository;
 import ru.melowetty.service.CategoryService;
-import ru.melowetty.service.KudagoService;
 
 import java.util.List;
 
@@ -18,23 +21,18 @@ import java.util.List;
 @Slf4j
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
-    private final KudagoService kudagoService;
+    private final CategoryEventManager eventManager;
+    private final CategoryTransactionService transactionService;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, KudagoService kudagoService) {
+
+    public CategoryServiceImpl(CategoryRepository categoryRepository,
+                               CategoryEventManager eventManager,
+                               CategoryTransactionService transactionService
+    ) {
         this.categoryRepository = categoryRepository;
-        this.kudagoService = kudagoService;
+        this.eventManager = eventManager;
+        this.transactionService = transactionService;
         log.info("CategoryServiceImpl created");
-    }
-
-    @EventListener(ApplicationReadyEvent.class)
-    @Timed
-    public void initialize() {
-        log.info("Инициализация категорий запущена");
-        var categories = kudagoService.getCategories();
-        for (var category : categories) {
-            categoryRepository.create(category);
-        }
-        log.info("Инициализация категорий окончена, теперь категорий: {}", categoryRepository.findAll().size());
     }
 
     @Override
@@ -52,10 +50,17 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category createCategory(String slug, String name) {
-        var category = new Category();
-        category.setName(name);
-        category.setSlug(slug);
-        return categoryRepository.create(category);
+        try {
+            var category = new Category();
+            category.setName(name);
+            category.setSlug(slug);
+            var newCategory = categoryRepository.create(category);
+            eventManager.notify(EventType.CREATED, newCategory);
+            return newCategory;
+        } catch (RuntimeException e) {
+            transactionService.rollback();
+            return null;
+        }
     }
 
     @Override
@@ -67,7 +72,9 @@ public class CategoryServiceImpl implements CategoryService {
         category.setId(id);
         category.setSlug(request.slug);
         category.setName(request.name);
-        return categoryRepository.update(category);
+        var newCategory = categoryRepository.update(category);
+        eventManager.notify(EventType.CHANGED, newCategory);
+        return newCategory;
     }
 
     @Override
@@ -76,6 +83,8 @@ public class CategoryServiceImpl implements CategoryService {
             throw new EntityNotFoundException("Категория с таким идентификатором не найдена!");
         }
 
+        var category = getCategoryById(id);
         categoryRepository.removeById(id);
+        eventManager.notify(EventType.DELETED, category);
     }
 }

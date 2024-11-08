@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.melowetty.repository.impl.BaseRepositoryImpl;
 
+import java.io.Serializable;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -120,7 +121,7 @@ public class BaseRepositoryImplTest {
         assertEquals(2, result);
     }
 
-    static class Entity {
+    static class Entity implements Serializable {
         private Integer id;
         private String name;
 

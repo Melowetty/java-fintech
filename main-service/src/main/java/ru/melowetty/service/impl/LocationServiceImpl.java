@@ -1,15 +1,18 @@
 package ru.melowetty.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import ru.melowetty.annotation.Timed;
+import ru.melowetty.command.InitCommand;
 import ru.melowetty.controller.request.LocationPutRequest;
+import ru.melowetty.event.EventType;
+import ru.melowetty.event.impl.LocationEventManager;
 import ru.melowetty.exception.EntityNotFoundException;
 import ru.melowetty.model.Location;
 import ru.melowetty.repository.LocationRepository;
-import ru.melowetty.service.KudagoService;
 import ru.melowetty.service.LocationService;
 
 import java.util.List;
@@ -18,23 +21,17 @@ import java.util.List;
 @Slf4j
 public class LocationServiceImpl implements LocationService {
     private final LocationRepository locationRepository;
-    private final KudagoService kudagoService;
+    private final LocationEventManager eventManager;
+    private final LocationTransactionService transactionService;
 
-    public LocationServiceImpl(LocationRepository locationRepository, KudagoService kudagoService) {
+    public LocationServiceImpl(
+            LocationRepository locationRepository, LocationEventManager eventManager,
+            LocationTransactionService transactionService
+    ) {
         this.locationRepository = locationRepository;
-        this.kudagoService = kudagoService;
+        this.eventManager = eventManager;
+        this.transactionService = transactionService;
         log.info("LocationServiceImpl created");
-    }
-
-    @EventListener(ApplicationReadyEvent.class)
-    @Timed
-    public void initialize() {
-        log.info("Инициализация городов запущена");
-        var locations = kudagoService.getLocations();
-        for (var location : locations) {
-            locationRepository.create(location);
-        }
-        log.info("Инициализация городов окончена, теперь городов: {}", locationRepository.findAll().size());
     }
 
     @Override
@@ -53,10 +50,17 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public Location createLocation(String slug, String name) {
-        var location = new Location();
-        location.setName(name);
-        location.setSlug(slug);
-        return locationRepository.create(location);
+        try {
+            var location = new Location();
+            location.setName(name);
+            location.setSlug(slug);
+            var newLocation = locationRepository.create(location);
+            eventManager.notify(EventType.CREATED, newLocation);
+            return newLocation;
+        } catch (RuntimeException e) {
+            transactionService.rollback();
+            return null;
+        }
     }
 
     @Override
@@ -68,7 +72,9 @@ public class LocationServiceImpl implements LocationService {
         var location = new Location();
         location.setSlug(slug);
         location.setName(request.name);
-        return locationRepository.update(location);
+        var newLocation = locationRepository.update(location);
+        eventManager.notify(EventType.CHANGED, newLocation);
+        return newLocation;
     }
 
     @Override
@@ -76,7 +82,8 @@ public class LocationServiceImpl implements LocationService {
         if (!locationRepository.existsById(slug)) {
             throw new EntityNotFoundException("Локация с таким идентификатором не найдена!");
         }
-
+        var location = getLocationBySlug(slug);
         locationRepository.removeById(slug);
+        eventManager.notify(EventType.DELETED, location);
     }
 }

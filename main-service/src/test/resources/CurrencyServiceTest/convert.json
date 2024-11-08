@@ -1,0 +1,24 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/currencies/convert",
+    "bodyPatterns" : [ {
+      "equalToJson" : {
+        "fromCurrency": "USD",
+        "toCurrency": "RUB",
+        "amount": "1"
+      }
+    } ]
+  },
+  "response": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "status": 200,
+    "jsonBody": {
+      "fromCurrency": "USD",
+      "toCurrency": "RUB",
+      "convertedAmount": 50
+    }
+  }
+}
