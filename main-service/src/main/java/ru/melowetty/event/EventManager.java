@@ -24,7 +24,7 @@ public abstract class EventManager<E> {
         listeners.get(eventType).add(listener);
     }
 
-    public void unSubscribe(EventType eventType, EventListener<E> listener) {
+    public void unsubscribe(EventType eventType, EventListener<E> listener) {
         listeners.get(eventType).remove(listener);
     }
 

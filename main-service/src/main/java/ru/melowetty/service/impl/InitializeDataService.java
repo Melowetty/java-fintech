@@ -26,7 +26,7 @@ public class InitializeDataService {
     private final ScheduledExecutorService scheduledExecutorService;
 
     @Value("${api.kudago.init-data-rate}")
-    private String initDataRate;
+    private Duration initDataRate;
 
     public InitializeDataService(List<InitCommand> commands,
                                  @Qualifier("init_command_threads")
@@ -41,7 +41,7 @@ public class InitializeDataService {
     @EventListener(ApplicationStartedEvent.class)
     public void scheduleInitData() {
         scheduledExecutorService.scheduleAtFixedRate(this::initData, 0,
-                Duration.parse(initDataRate).toMillis(), TimeUnit.MILLISECONDS);
+                initDataRate.toMillis(), TimeUnit.MILLISECONDS);
 
     }
 

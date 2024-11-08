@@ -2,14 +2,16 @@ package ru.melowetty.service;
 
 import ru.melowetty.repository.Backupable;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Stack;
 
 public class BackupService {
-    Stack<Memento> history = new Stack<>();
+    Deque<Memento> history = new ArrayDeque<>();
 
     public void rollback() {
         if (!history.isEmpty()) {
-            history.peek().restore();
+            history.peekLast().restore();
         }
     }
 
