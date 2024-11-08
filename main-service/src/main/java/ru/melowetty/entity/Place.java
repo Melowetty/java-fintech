@@ -1,5 +1,6 @@
 package ru.melowetty.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -30,7 +31,7 @@ public class Place {
     @Column(nullable = false)
     public String name;
 
-    @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "place", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
     public List<Event> events;
 
 }
