@@ -6,7 +6,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.melowetty.controller.request.LocationPutRequest;
+import ru.melowetty.controller.request.PlacePutRequest;
 import ru.melowetty.model.Location;
 import ru.melowetty.service.LocationService;
 
@@ -23,8 +23,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(LocationController.class)
-public class LocationControllerTest {
+@WebMvcTest(PlaceController.class)
+public class PlaceControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -37,7 +37,7 @@ public class LocationControllerTest {
         var locations = Arrays.asList(new Location("slug1", "SPB"), new Location("slug2", "MOSCOW"));
         when(locationService.getLocations()).thenReturn(locations);
 
-        mockMvc.perform(get("/v1/locations")
+        mockMvc.perform(get("/v1/place")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].slug").value("slug1"))
@@ -51,7 +51,7 @@ public class LocationControllerTest {
         var location = new Location("slug1", "SPB");
         when(locationService.getLocationBySlug("slug1")).thenReturn(location);
 
-        mockMvc.perform(get("/v1/locations/slug1")
+        mockMvc.perform(get("/v1/place/slug1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.slug").value("slug1"))
@@ -60,11 +60,11 @@ public class LocationControllerTest {
 
     @Test
     public void updateLocation_existingSlug_returnsUpdatedLocation() throws Exception {
-        LocationPutRequest request = new LocationPutRequest("New SPB");
+        PlacePutRequest request = new PlacePutRequest("New SPB");
         var location = new Location("slug", "New SPB");
         when(locationService.updateLocation("slug", request)).thenReturn(location);
 
-        mockMvc.perform(put("/v1/locations/slug")
+        mockMvc.perform(put("/v1/place/slug")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\": \"New SPB\"}"))
                 .andExpect(status().isOk())
@@ -77,7 +77,7 @@ public class LocationControllerTest {
         var location = new Location("slug", "name");
         when(locationService.createLocation("slug", "name")).thenReturn(location);
 
-        mockMvc.perform(post("/v1/locations")
+        mockMvc.perform(post("/v1/place")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"slug\": \"slug\", \"name\": \"name\"}"))
                 .andExpect(status().isOk())
@@ -89,7 +89,7 @@ public class LocationControllerTest {
     public void deleteLocationBySlug_existingSlug_deletesLocation() throws Exception {
         doNothing().when(locationService).deleteLocation("test");
 
-        mockMvc.perform(delete("/v1/locations/test")
+        mockMvc.perform(delete("/v1/place/test")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
