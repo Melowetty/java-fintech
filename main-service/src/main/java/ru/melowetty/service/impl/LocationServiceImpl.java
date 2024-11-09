@@ -1,13 +1,8 @@
 package ru.melowetty.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import ru.melowetty.annotation.Timed;
-import ru.melowetty.command.InitCommand;
-import ru.melowetty.controller.request.LocationPutRequest;
+import ru.melowetty.controller.request.PlacePutRequest;
 import ru.melowetty.event.EventType;
 import ru.melowetty.event.impl.LocationEventManager;
 import ru.melowetty.exception.EntityNotFoundException;
@@ -64,7 +59,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Location updateLocation(String slug, LocationPutRequest request) {
+    public Location updateLocation(String slug, PlacePutRequest request) {
         if (!locationRepository.existsById(slug)) {
             throw new EntityNotFoundException("Локация с таким идентификатором не найдена!");
         }
