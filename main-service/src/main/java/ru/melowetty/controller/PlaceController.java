@@ -16,14 +16,14 @@ import ru.melowetty.annotation.Timed;
 import ru.melowetty.controller.request.PlaceCreateRequest;
 import ru.melowetty.controller.request.PlacePutRequest;
 import ru.melowetty.dto.PlaceDto;
+import ru.melowetty.dto.PlaceShortDto;
 import ru.melowetty.entity.Place;
-import ru.melowetty.model.Location;
 import ru.melowetty.service.PlaceService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/place")
+@RequestMapping("/place")
 @Timed
 @Valid
 public class PlaceController {
@@ -34,8 +34,8 @@ public class PlaceController {
     }
 
     @GetMapping(produces = "application/json")
-    public List<PlaceDto> getPlaces() {
-        return placeService.getAllPlaces().stream().map(Place::toDto).toList();
+    public List<PlaceShortDto> getPlaces() {
+        return placeService.getAllPlaces().stream().map(Place::toShortDto).toList();
     }
 
     @GetMapping(path = "/{id}", produces = "application/json")
@@ -44,14 +44,14 @@ public class PlaceController {
     }
 
     @DeleteMapping(path = "/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePlace(@PathVariable @NotNull Long id) {
         placeService.deletePlaceById(id);
     }
 
     @PostMapping(produces = "application/json")
-    public PlaceDto createPlace(@RequestBody @NotNull PlaceCreateRequest request) {
-        return placeService.createPlace(request.name, request.slug).toDto();
+    @ResponseStatus(HttpStatus.CREATED)
+    public PlaceShortDto createPlace(@RequestBody @NotNull PlaceCreateRequest request) {
+        return placeService.createPlace(request.name, request.slug).toShortDto();
     }
 
     @PutMapping(path = "/{id}", produces = "application/json")

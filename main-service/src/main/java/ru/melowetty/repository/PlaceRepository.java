@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface PlaceRepository extends JpaRepository<Place, Long> {
     @Query("SELECT p " +
             "FROM Place p " +
-            "JOIN FETCH p.events " +
-            "WHERE p.id = ?1")
+            "LEFT JOIN FETCH p.events " +
+            "WHERE p.id = :id")
     Optional<Place> getPlaceById(Long id);
 }
