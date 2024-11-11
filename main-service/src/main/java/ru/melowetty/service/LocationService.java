@@ -1,6 +1,5 @@
 package ru.melowetty.service;
 
-import ru.melowetty.controller.request.PlacePutRequest;
 import ru.melowetty.model.Location;
 
 import java.util.List;

@@ -42,7 +42,7 @@ public class PlaceService {
 
     public Place updatePlace(Long id, String name, String slug) {
         var place = placeRepository.findById(id).orElseThrow(() ->
-            new EntityNotFoundException("Место с таким ID не найдено!"));
+                new EntityNotFoundException("Место с таким ID не найдено!"));
 
         place.setName(name);
         place.setSlug(slug);

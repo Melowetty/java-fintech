@@ -1,6 +1,5 @@
 package ru.melowetty.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,7 +13,6 @@ import lombok.Setter;
 import ru.melowetty.dto.EventDto;
 import ru.melowetty.dto.EventShortDto;
 import ru.melowetty.dto.EventWithoutPlaceDto;
-import ru.melowetty.utils.DateUtils;
 
 import java.time.LocalDateTime;
 

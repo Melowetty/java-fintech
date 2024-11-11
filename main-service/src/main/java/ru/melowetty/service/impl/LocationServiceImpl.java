@@ -2,7 +2,6 @@ package ru.melowetty.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.melowetty.controller.request.PlacePutRequest;
 import ru.melowetty.event.EventType;
 import ru.melowetty.event.impl.LocationEventManager;
 import ru.melowetty.exception.EntityNotFoundException;

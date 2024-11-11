@@ -21,19 +21,16 @@ import java.util.List;
 @Entity
 @Table(name = "places")
 public class Place {
+    @Column(nullable = false)
+    public String slug;
+    @Column(nullable = false)
+    public String name;
+    @OneToMany(mappedBy = "place", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
+    public List<Event> events;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
-
-    @Column(nullable = false)
-    public String slug;
-
-    @Column(nullable = false)
-    public String name;
-
-    @OneToMany(mappedBy = "place", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
-    public List<Event> events;
 
     public PlaceShortDto toShortDto() {
         return new PlaceShortDto(id, slug, name);
