@@ -60,7 +60,7 @@ public class PlaceServiceTest {
         place.setSlug("test2");
 
         Mockito.when(placeRepository.save(ArgumentMatchers.argThat((arg) ->
-            arg.name.equals("test") && arg.slug.equals("test2")
+                arg.name.equals("test") && arg.slug.equals("test2")
         ))).thenReturn(place);
 
         var actual = placeService.createPlace("test", "test2");
@@ -134,7 +134,7 @@ public class PlaceServiceTest {
         newPlace.setSlug("new-test2");
 
         Mockito.doReturn(place)
-                        .when(placeService).getPlaceById(1L);
+                .when(placeService).getPlaceById(1L);
 
         Mockito.when(placeRepository.save(ArgumentMatchers.argThat((arg) ->
                 arg.name.equals("new-test") && arg.slug.equals("new-test2") && arg.getId() == 1L))).thenReturn(newPlace);

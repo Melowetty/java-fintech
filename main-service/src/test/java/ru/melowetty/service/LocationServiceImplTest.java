@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import ru.melowetty.command.InitCommand;
-import ru.melowetty.controller.request.PlacePutRequest;
 import ru.melowetty.event.impl.LocationEventManager;
 import ru.melowetty.exception.EntityNotFoundException;
 import ru.melowetty.model.Location;

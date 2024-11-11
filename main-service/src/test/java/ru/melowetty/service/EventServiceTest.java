@@ -106,7 +106,7 @@ public class EventServiceTest {
         event.setPlace(place);
 
         Mockito.doReturn(place)
-                        .when(eventService).getPlaceById(1L);
+                .when(eventService).getPlaceById(1L);
 
         Mockito.when(eventRepository.save(ArgumentMatchers.argThat((arg) ->
                 arg.name.equals("test") && arg.place.getId() == 1L && arg.date.equals(date)
@@ -187,11 +187,11 @@ public class EventServiceTest {
                 .when(eventService).getEventById(1L);
 
         Mockito.doReturn(place)
-                        .when(eventService).getPlaceById(1L);
+                .when(eventService).getPlaceById(1L);
 
         Mockito.when(eventRepository.save(ArgumentMatchers.argThat((arg) ->
-                arg.name.equals("new-test") && arg.place.getId() == 1L && arg.getId() == 1L
-                        && arg.date.equals(newDate))
+                        arg.name.equals("new-test") && arg.place.getId() == 1L && arg.getId() == 1L
+                                && arg.date.equals(newDate))
                 )
         ).thenReturn(newEvent);
 

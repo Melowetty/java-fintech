@@ -1,6 +1,5 @@
 package ru.melowetty.controller;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -64,7 +63,7 @@ public class EventController {
 
     @GetMapping("/{id}")
     public EventDto getEvent(@PathVariable Long id) {
-       return eventService.getEventById(id).toDto();
+        return eventService.getEventById(id).toDto();
     }
 
     @PostMapping
