@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import ru.melowetty.command.InitCommand;
-import ru.melowetty.controller.request.LocationPutRequest;
+import ru.melowetty.controller.request.PlacePutRequest;
 import ru.melowetty.event.impl.LocationEventManager;
 import ru.melowetty.exception.EntityNotFoundException;
 import ru.melowetty.model.Location;
@@ -102,26 +102,28 @@ public class LocationServiceImplTest {
     @Test
     public void updateLocation_existingSlug_updatesLocation() {
         String slug = "existing-slug";
-        LocationPutRequest request = new LocationPutRequest("updated-name");
+
         Location location = new Location();
+
         location.setSlug(slug);
-        location.setName(request.name);
+        location.setName("updated-name");
+
         Mockito.when(locationRepository.existsById(slug)).thenReturn(true);
         Mockito.when(locationRepository.update(Mockito.any(Location.class))).thenReturn(location);
 
-        Location result = locationService.updateLocation(slug, request);
+        Location result = locationService.updateLocation(slug, "updated-name");
 
         assertEquals(slug, result.getSlug());
-        assertEquals(request.name, result.getName());
+        assertEquals("updated-name", result.getName());
     }
 
     @Test
     public void updateLocation_nonExistingSlug_throwsException() {
         String nonExistingSlug = "non-existing-slug";
-        LocationPutRequest request = new LocationPutRequest("updated-name");
+
         Mockito.when(locationRepository.existsById(nonExistingSlug)).thenReturn(false);
 
-        assertThrows(EntityNotFoundException.class, () -> locationService.updateLocation(nonExistingSlug, request));
+        assertThrows(EntityNotFoundException.class, () -> locationService.updateLocation(nonExistingSlug, "updated-name"));
     }
 
     @Test

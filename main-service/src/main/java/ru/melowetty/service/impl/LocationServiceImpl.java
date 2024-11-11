@@ -59,14 +59,14 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Location updateLocation(String slug, PlacePutRequest request) {
+    public Location updateLocation(String slug, String name) {
         if (!locationRepository.existsById(slug)) {
             throw new EntityNotFoundException("Локация с таким идентификатором не найдена!");
         }
 
         var location = new Location();
         location.setSlug(slug);
-        location.setName(request.name);
+        location.setName(name);
         var newLocation = locationRepository.update(location);
         eventManager.notify(EventType.CHANGED, newLocation);
         return newLocation;

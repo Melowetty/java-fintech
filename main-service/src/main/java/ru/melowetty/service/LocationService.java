@@ -12,7 +12,7 @@ public interface LocationService {
 
     Location createLocation(String slug, String name);
 
-    Location updateLocation(String slug, PlacePutRequest request);
+    Location updateLocation(String slug, String name);
 
     void deleteLocation(String slug);
 }
