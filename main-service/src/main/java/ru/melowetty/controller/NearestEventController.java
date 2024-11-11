@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
-@RequestMapping("events")
+@RequestMapping("nearest-events")
 @Valid
 public class NearestEventController {
     private final NearestEventsService eventsService;
