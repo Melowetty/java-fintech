@@ -97,4 +97,8 @@ public class EventService {
         return placeRepository.getPlaceById(id)
                 .orElseThrow(() -> new RelatedEntityNotFoundException("Место с таким ID не найдено!"));
     }
+
+    public Long count() {
+        return eventRepository.count();
+    }
 }

@@ -48,4 +48,8 @@ public class PlaceService {
 
         return placeRepository.save(place);
     }
+
+    public Long count() {
+        return placeRepository.count();
+    }
 }
