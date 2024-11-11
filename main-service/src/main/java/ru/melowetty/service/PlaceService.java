@@ -24,7 +24,7 @@ public class PlaceService {
     }
 
     public Place getPlaceById(Long id) {
-        return placeRepository.findById(id)
+        return placeRepository.getPlaceById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Место с таким ID не найдено!"));
     }
 
@@ -51,5 +51,9 @@ public class PlaceService {
 
     public Long count() {
         return placeRepository.count();
+    }
+
+    public void deleteAll() {
+        placeRepository.deleteAll();
     }
 }

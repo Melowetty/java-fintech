@@ -11,7 +11,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.context.annotation.Lazy;
+import ru.melowetty.dto.PlaceDto;
+import ru.melowetty.dto.PlaceShortDto;
 
 import java.util.List;
 
@@ -34,4 +35,11 @@ public class Place {
     @OneToMany(mappedBy = "place", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
     public List<Event> events;
 
+    public PlaceShortDto toShortDto() {
+        return new PlaceShortDto(id, slug, name);
+    }
+
+    public PlaceDto toDto() {
+        return new PlaceDto(id, slug, name, events.stream().map(Event::toWithoutPlaceDto).toList());
+    }
 }
