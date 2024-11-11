@@ -35,7 +35,7 @@ public class PlaceServiceTest {
         place.setName("test");
         place.setSlug("test2");
 
-        Mockito.when(placeRepository.findById(1L)).thenReturn(Optional.of(place));
+        Mockito.when(placeRepository.getPlaceById(1L)).thenReturn(Optional.of(place));
 
         var actual = placeService.getPlaceById(1L);
 
@@ -44,7 +44,7 @@ public class PlaceServiceTest {
 
     @Test
     public void testGetByIdIfItNotExist() {
-        Mockito.when(placeRepository.findById(any())).thenReturn(Optional.empty());
+        Mockito.when(placeRepository.getPlaceById(any())).thenReturn(Optional.empty());
 
         Assertions.assertThrows(EntityNotFoundException.class, () -> {
             placeService.getPlaceById(1L);

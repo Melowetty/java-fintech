@@ -1,5 +1,6 @@
 package ru.melowetty.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,9 +19,11 @@ import ru.melowetty.dto.EventDto;
 import ru.melowetty.dto.EventShortDto;
 import ru.melowetty.entity.Event;
 import ru.melowetty.service.EventService;
+import ru.melowetty.utils.DateUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -40,18 +43,20 @@ public class EventController {
             @RequestParam(required = false)
             Long placeId,
             @RequestParam(required = false)
-            LocalDate fromDate,
+            String fromDate,
             @RequestParam(required = false)
-            LocalDate toDate
+            String toDate
     ) {
         LocalDateTime fromDateTime = null;
         if (fromDate != null) {
-            fromDateTime = fromDate.atStartOfDay();
+            var date = LocalDate.parse(fromDate, DateTimeFormatter.ofPattern(DateUtils.DATE_PATTERN));
+            fromDateTime = date.atStartOfDay();
         }
 
         LocalDateTime toDateTime = null;
-        if (fromDate != null) {
-            toDateTime = toDate.atTime(23, 59, 59);
+        if (toDate != null) {
+            var date = LocalDate.parse(toDate, DateTimeFormatter.ofPattern(DateUtils.DATE_PATTERN));
+            toDateTime = date.atTime(23, 59, 59);
         }
         return eventService.filterAllEvents(name, placeId, fromDateTime, toDateTime)
                 .stream().map(Event::toShortDto).toList();

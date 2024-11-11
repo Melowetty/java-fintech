@@ -73,7 +73,7 @@ public class EventServiceTest {
         place.setName("test");
         place.setSlug("test2");
 
-        Mockito.when(placeRepository.getPlaceById(1L)).thenReturn(Optional.of(place));
+        Mockito.when(placeRepository.findById(1L)).thenReturn(Optional.of(place));
 
         var actual = eventService.getPlaceById(1L);
 
@@ -82,7 +82,7 @@ public class EventServiceTest {
 
     @Test
     public void testGetPlaceByIdIfItNotExist() {
-        Mockito.when(placeRepository.getPlaceById(any())).thenReturn(Optional.empty());
+        Mockito.when(placeRepository.findById(any())).thenReturn(Optional.empty());
 
         Assertions.assertThrows(RelatedEntityNotFoundException.class, () -> {
             eventService.getPlaceById(1L);
