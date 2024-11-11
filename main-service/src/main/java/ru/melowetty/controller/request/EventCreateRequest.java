@@ -1,5 +1,6 @@
 package ru.melowetty.controller.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,6 +9,7 @@ import lombok.Data;
 import lombok.Generated;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import ru.melowetty.utils.DateUtils;
 
 import java.time.LocalDateTime;
 
@@ -22,6 +24,7 @@ public class EventCreateRequest {
     public String name;
 
     @NotNull(message = "Не указана дата проведения мероприятия")
+    @JsonFormat(pattern = DateUtils.DATE_TIME_PATTERN)
     public LocalDateTime date;
 
     @NotNull(message = "Не указано место проведения мероприятия")

@@ -1,6 +1,7 @@
 package ru.melowetty.controller;
 
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,13 +10,17 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.melowetty.controller.request.EventCreateRequest;
 import ru.melowetty.controller.request.EventPutRequest;
+import ru.melowetty.dto.EventDto;
+import ru.melowetty.dto.EventShortDto;
 import ru.melowetty.entity.Event;
 import ru.melowetty.service.EventService;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -29,7 +34,7 @@ public class EventController {
     }
 
     @GetMapping
-    public List<Event> getAllEvents(
+    public List<EventShortDto> getAllEvents(
             @RequestParam(required = false)
             String name,
             @RequestParam(required = false)
@@ -39,21 +44,32 @@ public class EventController {
             @RequestParam(required = false)
             LocalDate toDate
     ) {
-        return eventService.filterAllEvents(name, placeId, fromDate.atStartOfDay(), toDate.atTime(23, 59, 59));
+        LocalDateTime fromDateTime = null;
+        if (fromDate != null) {
+            fromDateTime = fromDate.atStartOfDay();
+        }
+
+        LocalDateTime toDateTime = null;
+        if (fromDate != null) {
+            toDateTime = toDate.atTime(23, 59, 59);
+        }
+        return eventService.filterAllEvents(name, placeId, fromDateTime, toDateTime)
+                .stream().map(Event::toShortDto).toList();
     }
 
     @GetMapping("/{id}")
-    public Event getEvent(@PathVariable Long id) {
-       return eventService.getEventById(id);
+    public EventDto getEvent(@PathVariable Long id) {
+       return eventService.getEventById(id).toDto();
     }
 
     @PostMapping
-    public Event createEvent(@RequestBody EventCreateRequest request) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public EventDto createEvent(@RequestBody EventCreateRequest request) {
         return eventService.createEvent(
                 request.name,
                 request.date,
                 request.placeId
-        );
+        ).toDto();
     }
 
     @DeleteMapping("/{id}")
@@ -62,7 +78,7 @@ public class EventController {
     }
 
     @PutMapping("/{id}")
-    public Event updateEvent(@PathVariable Long id, @RequestBody EventPutRequest request) {
-        return eventService.updateEvent(id, request.name, request.date, request.placeId);
+    public EventDto updateEvent(@PathVariable Long id, @RequestBody EventPutRequest request) {
+        return eventService.updateEvent(id, request.name, request.date, request.placeId).toDto();
     }
 }

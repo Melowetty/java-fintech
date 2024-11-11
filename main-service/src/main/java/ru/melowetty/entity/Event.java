@@ -1,5 +1,6 @@
 package ru.melowetty.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,6 +11,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import ru.melowetty.dto.EventDto;
+import ru.melowetty.dto.EventShortDto;
+import ru.melowetty.dto.EventWithoutPlaceDto;
+import ru.melowetty.utils.DateUtils;
 
 import java.time.LocalDateTime;
 
@@ -32,5 +37,17 @@ public class Event {
     @ManyToOne
     @JoinColumn(name = "place_id", nullable = false)
     public Place place;
+
+    public EventShortDto toShortDto() {
+        return new EventShortDto(id, name, date, place.getId());
+    }
+
+    public EventWithoutPlaceDto toWithoutPlaceDto() {
+        return new EventWithoutPlaceDto(id, name, date);
+    }
+
+    public EventDto toDto() {
+        return new EventDto(id, name, date, place.toShortDto());
+    }
 
 }

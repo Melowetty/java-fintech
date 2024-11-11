@@ -94,11 +94,15 @@ public class EventService {
     }
 
     public Place getPlaceById(Long id) {
-        return placeRepository.getPlaceById(id)
+        return placeRepository.findById(id)
                 .orElseThrow(() -> new RelatedEntityNotFoundException("Место с таким ID не найдено!"));
     }
 
     public Long count() {
         return eventRepository.count();
+    }
+
+    public void deleteAll() {
+        eventRepository.deleteAll();
     }
 }

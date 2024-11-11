@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.melowetty.annotation.Timed;
 import ru.melowetty.controller.request.PlaceCreateRequest;
 import ru.melowetty.controller.request.PlacePutRequest;
+import ru.melowetty.dto.PlaceDto;
 import ru.melowetty.entity.Place;
 import ru.melowetty.model.Location;
 import ru.melowetty.service.PlaceService;
@@ -33,13 +34,13 @@ public class PlaceController {
     }
 
     @GetMapping(produces = "application/json")
-    public List<Place> getPlaces() {
-        return placeService.getAllPlaces();
+    public List<PlaceDto> getPlaces() {
+        return placeService.getAllPlaces().stream().map(Place::toDto).toList();
     }
 
     @GetMapping(path = "/{id}", produces = "application/json")
-    public Place getLocationBySlug(@PathVariable @NotNull Long id) {
-        return placeService.getPlaceById(id);
+    public PlaceDto getLocationBySlug(@PathVariable @NotNull Long id) {
+        return placeService.getPlaceById(id).toDto();
     }
 
     @DeleteMapping(path = "/{id}")
@@ -49,12 +50,12 @@ public class PlaceController {
     }
 
     @PostMapping(produces = "application/json")
-    public Place createPlace(@RequestBody @NotNull PlaceCreateRequest request) {
-        return placeService.createPlace(request.name, request.slug);
+    public PlaceDto createPlace(@RequestBody @NotNull PlaceCreateRequest request) {
+        return placeService.createPlace(request.name, request.slug).toDto();
     }
 
     @PutMapping(path = "/{id}", produces = "application/json")
-    public Place updateLocation(@PathVariable @NotNull Long id, @RequestBody @NotNull PlacePutRequest request) {
-        return placeService.updatePlace(id, request.name, request.slug);
+    public PlaceDto updateLocation(@PathVariable @NotNull Long id, @RequestBody @NotNull PlacePutRequest request) {
+        return placeService.updatePlace(id, request.name, request.slug).toDto();
     }
 }
