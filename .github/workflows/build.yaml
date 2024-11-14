@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: cd /main-service
+      - run: cd main-service
       - uses: actions/setup-java@v3
         with:
           java-version: 17
@@ -70,7 +70,7 @@ jobs:
         - name: Check out the repo
           uses: actions/checkout@v4
 
-        - run: cd /main-service
+        - run: cd main-service
 
         - name: Download Jar
           uses: actions/download-artifact@v3
