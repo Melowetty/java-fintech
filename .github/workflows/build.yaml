@@ -14,9 +14,11 @@ jobs:
   build-main-artifact:
     name: Build and test project
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./main-service
     steps:
       - uses: actions/checkout@v3
-      - run: cat main-service
       - uses: actions/setup-java@v3
         with:
           java-version: 17
@@ -59,7 +61,10 @@ jobs:
 
       runs-on: ubuntu-latest
       if: github.event_name == 'push'
-
+      
+      defaults:
+        run:
+          working-directory: ./main-service
       permissions:
         contents: read
         packages: write
