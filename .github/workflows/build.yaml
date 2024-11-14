@@ -85,8 +85,6 @@ jobs:
         - name: Check out the repo
           uses: actions/checkout@v4
 
-        - run: cd main-service
-
         - name: Download Jar
           uses: actions/download-artifact@v3
           with:

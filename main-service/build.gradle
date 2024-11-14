@@ -38,6 +38,7 @@ dependencies {
     implementation 'org.wiremock.integrations.testcontainers:wiremock-testcontainers-module:1.0-alpha-13'
     runtimeOnly 'org.postgresql:postgresql'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly("com.h2database:h2")
     spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.12.0'
 }
 
