@@ -14,38 +14,47 @@ jobs:
   build-main-artifact:
     name: Build and test project
     runs-on: ubuntu-latest
+
     defaults:
       run:
         working-directory: ./main-service
+
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-java@v3
         with:
           java-version: 17
           distribution: temurin
           cache: gradle
+
       - run: ./gradlew build --no-daemon
+
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           files: |
             build/test-results/test/*.xml
+
       - name: Publish Sonarlint Results
         uses: jwgmeligmeyling/spotbugs-github-action@v1.2
         with:
           name: Sonarlint
           title: Sonarlint report
           path: build/reports/sonarlint/*.xml
+
       - name: Publish Spotbugs Results
         uses: jwgmeligmeyling/spotbugs-github-action@v1.2
         with:
           name: Spotbugs
           path: build/reports/spotbugs/*.xml
+
       - name: Generate JaCoCo Badge
         uses: cicirello/jacoco-badge-generator@v2
         with:
           jacoco-csv-file: build/reports/jacoco/test/jacocoTestReport.csv
+
       - name: Archive build artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -61,10 +70,11 @@ jobs:
 
       runs-on: ubuntu-latest
       if: github.event_name == 'push'
-      
+
       defaults:
         run:
           working-directory: ./main-service
+
       permissions:
         contents: read
         packages: write
