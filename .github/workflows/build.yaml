@@ -1,0 +1,100 @@
+name: build
+run-name: ${{ github.actor }} is building the gradle project
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+jobs:
+  build-main-artifact:
+    name: Build and test project
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: cd /main-service
+      - uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: temurin
+          cache: gradle
+      - run: ./gradlew build --no-daemon
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+            build/test-results/test/*.xml
+      - name: Publish Sonarlint Results
+        uses: jwgmeligmeyling/spotbugs-github-action@v1.2
+        with:
+          name: Sonarlint
+          title: Sonarlint report
+          path: build/reports/sonarlint/*.xml
+      - name: Publish Spotbugs Results
+        uses: jwgmeligmeyling/spotbugs-github-action@v1.2
+        with:
+          name: Spotbugs
+          path: build/reports/spotbugs/*.xml
+      - name: Generate JaCoCo Badge
+        uses: cicirello/jacoco-badge-generator@v2
+        with:
+          jacoco-csv-file: build/reports/jacoco/test/jacocoTestReport.csv
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-gradle-output
+          path: |
+            build/libs/app-standalone.jar
+          retention-days: 14
+
+  publish-docker-image:
+      needs: build-main-artifact
+
+      name: Publish Docker image to Packages
+
+      runs-on: ubuntu-latest
+      if: github.event_name == 'push'
+
+      permissions:
+        contents: read
+        packages: write
+        attestations: write
+        id-token: write
+
+      steps:
+        - name: Check out the repo
+          uses: actions/checkout@v4
+
+        - run: cd /main-service
+
+        - name: Download Jar
+          uses: actions/download-artifact@v3
+          with:
+            name: build-gradle-output
+
+        - name: Log in to the Container registry
+          uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+          with:
+            registry: ${{ env.REGISTRY }}
+            username: ${{ github.actor }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Extract metadata (tags, labels) for Docker
+          id: meta
+          uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+
+          with:
+            images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+        - name: Build and Push Image
+          uses: docker/build-push-action@eafaea8d0f5853934deece2ffa67af59d936562b
+          with:
+            context: .
+            push: true
+            tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
+            labels: ${{ steps.meta.outputs.labels }}

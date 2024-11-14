@@ -3,6 +3,8 @@ plugins {
     id 'org.springframework.boot' version '3.3.4'
     id 'io.spring.dependency-management' version '1.1.6'
     id 'jacoco'
+    id 'com.github.spotbugs' version '5.0.14'
+    id 'se.solrike.sonarlint' version '1.0.0-beta.9'
 }
 
 group = 'ru.melowetty'
@@ -51,4 +53,34 @@ jacocoTestReport {
             fileTree(dir: it, exclude: 'ru/melowetty/controller/request/**')
         }))
     }
+
+    reports {
+        xml.required = false
+        csv.required = true
+        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+    }
+}
+
+sonarlintMain {
+    ignoreFailures = true
+    dependencies {
+        sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.17.0.31219'
+    }
+    reports {
+        xml.enabled = true
+    }
+}
+spotbugsMain {
+    ignoreFailures = true
+    dependencies {
+        spotbugs 'com.github.spotbugs:spotbugs:4.7.3'
+        spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.12.0'
+    }
+    reports {
+        xml.enabled = true
+    }
+}
+
+bootJar {
+    archiveFileName = "app-standalone.jar"
 }
