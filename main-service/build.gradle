@@ -46,7 +46,6 @@ test {
     useJUnitPlatform()
 }
 
-jacocoTestReport.dependsOn(test)
 
 jacocoTestReport {
     afterEvaluate {
@@ -59,8 +58,12 @@ jacocoTestReport {
     reports {
         xml.required = false
         csv.required = true
-        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
     }
+}
+
+test {
+    finalizedBy("jacocoTestReport")
 }
 
 sonarlintMain {
