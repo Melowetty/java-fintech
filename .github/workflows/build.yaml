@@ -9,12 +9,12 @@ on:
       - main
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: melowetty/java-fintech
 jobs:
   build-main-artifact:
     name: Build and test project
     runs-on: ubuntu-latest
-    
+
     permissions: write-all
 
     defaults:
