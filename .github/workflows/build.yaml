@@ -3,10 +3,10 @@ run-name: ${{ github.actor }} is building the gradle project
 on:
   pull_request:
     branches:
-      - master
+      - main
   push:
     branches:
-      - master
+      - main
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
