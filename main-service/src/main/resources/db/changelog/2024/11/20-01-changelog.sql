@@ -47,3 +47,7 @@ ALTER TABLE users_authorities
 ALTER TABLE users_authorities
     ADD CONSTRAINT fk_useaut_on_user FOREIGN KEY (user_id) REFERENCES users (id);
 
+-- changeset denismalinin:1732053628495-10
+INSERT INTO role (id, name) VALUES (1, 'ROLE_USER');
+INSERT INTO role (id, name) VALUES (2, 'ROLE_ADMIN')
+
