@@ -24,4 +24,4 @@ spring:
       ddl-auto: validate
   security:
     jwt:
-      private-key: test
+      private-key: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest

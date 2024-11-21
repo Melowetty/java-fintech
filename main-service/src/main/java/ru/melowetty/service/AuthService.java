@@ -1,14 +1,16 @@
 package ru.melowetty.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.melowetty.entity.User;
+import ru.melowetty.exception.UsernameAlreadyExists;
 import ru.melowetty.model.AccessToken;
-import ru.melowetty.model.AuthInfo;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -17,6 +19,10 @@ public class AuthService {
     private final JwtService jwtService;
 
     public AccessToken registerUser(String username, String password) {
+        if (userService.usernameIsExist(username)) {
+            throw new UsernameAlreadyExists("Пользователь с таким логином уже есть!");
+        }
+
         var user = userService.createUser(username, password);
         var token = jwtService.generateToken(user, false);
 
@@ -31,15 +37,14 @@ public class AuthService {
                 )
         );
 
-        var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var user = userService.getUserByUsername(username);
         var token = jwtService.generateToken(user, rememberMe);
 
         return new AccessToken(token);
     }
 
     public void logout() {
-        var details = (AuthInfo) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        var token = details.token();
+        var token = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
         SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
         jwtService.revokeToken(token);
     }

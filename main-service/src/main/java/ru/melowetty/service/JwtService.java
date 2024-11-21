@@ -7,20 +7,20 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import ru.melowetty.entity.RevokeToken;
 import ru.melowetty.entity.User;
 import ru.melowetty.model.UserInfo;
-import ru.melowetty.model.UserRole;
 import ru.melowetty.repository.RevokeTokenRepository;
+import ru.melowetty.repository.UserRepository;
 
 import java.security.Key;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,13 +29,16 @@ import java.util.Map;
 public class JwtService {
     @Value("${spring.security.jwt.private-key}")
     private String privateKey;
-    private RevokeTokenRepository revokeTokenRepository;
+    private final RevokeTokenRepository revokeTokenRepository;
+    private final UserRepository userRepository;
 
     public UserInfo extractUserInfo(String token) {
         var claims = getClaims(token);
         var username = claims.get("username", String.class);
-        List<UserRole> roles = claims.get("roles", List.class);
-        return new UserInfo(username, roles);
+        List<String> roles = claims.get("roles", List.class);
+        List<GrantedAuthority> authorities = roles.stream().map((authority) ->
+                (GrantedAuthority) new SimpleGrantedAuthority(authority)).toList();
+        return new UserInfo(username, authorities);
     }
 
     public void revokeToken(String token) {
@@ -60,32 +63,25 @@ public class JwtService {
             User user,
             boolean rememberMe
     ) {
-        var rolesById = new HashMap<Long, UserRole>();
-        for (var role : UserRole.values()) {
-            rolesById.put(role.getId(), role);
-        }
-
+        var claims = Map.of("username", user.getUsername(),
+                "roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
         return Jwts
                 .builder()
+                .setClaims(claims)
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(rememberMe
                         ? new Date(System.currentTimeMillis() + Duration.ofDays(30).toMillis())
                         : new Date(System.currentTimeMillis() + Duration.ofMinutes(10).toMillis()))
-                .setClaims(Map.of(
-                        "username", user.getUsername(),
-                        "roles", user.getAuthorities().stream().map(rolesById::get)
-                ))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
+    public boolean isTokenValid(String token) {
         UserInfo userInfo = extractUserInfo(token);
-        var username = userInfo.username();
         var isRevoked = revokeTokenRepository.existsById(token);
-        return username != null
-                && username.equals(userDetails.getUsername())
+        var userIsExist = userRepository.findUserByUsername(userInfo.username()).isPresent();
+        return  userIsExist
                 && !isTokenExpired(token)
                 && !isRevoked;
     }

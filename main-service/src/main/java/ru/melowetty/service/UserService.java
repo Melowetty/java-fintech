@@ -1,12 +1,10 @@
 package ru.melowetty.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
 import ru.melowetty.entity.User;
 import ru.melowetty.model.UserRole;
@@ -24,9 +22,7 @@ public class UserService implements UserDetailsService  {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findUserByUsername(username).orElseThrow(() ->
-                new UsernameNotFoundException("Пользователь с таким логином не найден")
-        );
+        return getUserByUsername(username);
     }
 
     public User createUser(String username, String password) {
@@ -40,5 +36,15 @@ public class UserService implements UserDetailsService  {
         user.authorities = Set.of(role);
 
         return userRepository.save(user);
+    }
+
+    public boolean usernameIsExist(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    public User getUserByUsername(String username) {
+        return userRepository.findUserByUsername(username).orElseThrow(
+                () -> new UsernameNotFoundException("Пользователь с таким логином не найден")
+        );
     }
 }
