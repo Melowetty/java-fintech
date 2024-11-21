@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.Generated;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import ru.melowetty.validation.annotation.ValidPassword;
 
 @Data
 @Generated
@@ -16,7 +17,6 @@ public class RegisterRequest {
     @NotBlank(message = "Имя пользователя не может быть пустым")
     String username;
 
-    @Length(max = 255)
-    @NotBlank(message = "Пароль не может быть пустым")
+    @ValidPassword
     String password;
 }

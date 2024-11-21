@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+import ru.melowetty.validation.annotation.ValidPassword;
 
 @Data
 @AllArgsConstructor
@@ -13,8 +14,7 @@ public class LoginRequest {
         @NotBlank(message = "Имя пользователя не может быть пустым")
         String username;
 
-        @Length(min = 3, max = 255)
-        @NotBlank(message = "Пароль не может быть пустым")
+        @ValidPassword
         String password;
 
         @NotNull(message = "Поле запомнить меня не должно быть пустым")
