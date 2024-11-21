@@ -14,18 +14,17 @@ import ru.melowetty.service.AuthService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("auth")
-@Valid
 public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public AccessToken registerUser(@RequestBody RegisterRequest request) {
+    public AccessToken registerUser(@RequestBody @Valid RegisterRequest request) {
         return authService.registerUser(request.getUsername(), request.getPassword());
     }
 
     @PostMapping("/login")
-    public AccessToken loginUser(@RequestBody LoginRequest request) {
-        return authService.login(request.username(), request.password(), request.rememberMe());
+    public AccessToken loginUser(@RequestBody @Valid LoginRequest request) {
+        return authService.login(request.getUsername(), request.getPassword(), request.isRememberMe());
     }
 
     @PostMapping("/logout")
