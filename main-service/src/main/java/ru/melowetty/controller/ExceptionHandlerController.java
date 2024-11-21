@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.melowetty.exception.ChangePasswordTokenIsExpired;
+import ru.melowetty.exception.EntityNotFoundException;
 import ru.melowetty.exception.MaxAttemptsSendCodeReachedException;
+import ru.melowetty.exception.RelatedEntityNotFoundException;
 import ru.melowetty.exception.UsernameAlreadyExists;
 import ru.melowetty.exception.WrongAuthCodeException;
 import ru.melowetty.model.BigErrorMessageResponse;
@@ -55,6 +57,18 @@ public class ExceptionHandlerController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorMessageResponse handleUsernameNotFoundException(UsernameNotFoundException e) {
         return new ErrorMessageResponse(HttpStatus.NOT_FOUND.value(), e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorMessageResponse handleEntityNotFoundException(EntityNotFoundException e) {
+        return new ErrorMessageResponse(HttpStatus.NOT_FOUND.value(), e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessageResponse handleRelatedEntityNotFoundException(RelatedEntityNotFoundException e) {
+        return new ErrorMessageResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
     }
 
     @ExceptionHandler

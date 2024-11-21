@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 @SpringBootTest
 @ActiveProfiles("test-with-db")
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 public class PlaceControllerE2ETest {
     @Autowired
     private EventService eventService;
