@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import ru.melowetty.exception.ChangePasswordTokenIsExpired;
+import ru.melowetty.exception.EntityNotFoundException;
 import ru.melowetty.exception.MaxAttemptsSendCodeReachedException;
 import ru.melowetty.exception.WrongAuthCodeException;
 import ru.melowetty.model.ChangePasswordToken;
@@ -22,6 +23,10 @@ public class PasswordRecoveryService {
     private final int MAX_ATTEMPTS_COUNT = 3;
 
     public ChangePasswordToken initPasswordRecovery(String username) {
+        if (!userService.usernameIsExist(username)) {
+            throw new EntityNotFoundException("Такой пользователь не найден!");
+        }
+
         var currentDate = LocalDateTime.now();
         var token = generateToken();
         var entity = new ChangePasswordToken(
@@ -44,6 +49,10 @@ public class PasswordRecoveryService {
 
         var entity = operations.get(token);
 
+        if (entity.nextAttemptTime.isAfter(LocalDateTime.now())) {
+            throw new RuntimeException("Ещё нельзя выслать новый код!");
+        }
+
         if (entity.attempts == MAX_ATTEMPTS_COUNT) {
             throw new MaxAttemptsSendCodeReachedException("Достигнут лимит в отправке новых сообщений с кодом!");
         }
@@ -62,7 +71,7 @@ public class PasswordRecoveryService {
         var entity = operations.get(token);
         var code = authCodes.get(token);
 
-        if (authCode.equals(code)) {
+        if (!authCode.equals(code)) {
             throw new WrongAuthCodeException("Неверный код подтверждения!");
         }
 
@@ -91,6 +100,9 @@ public class PasswordRecoveryService {
     }
 
     public void validateToken(String token) {
+        if (!operations.containsKey(token)) {
+            throw new ChangePasswordTokenIsExpired("Этот токен для сброса пароля уже недействителен!");
+        }
         var entity = operations.get(token);
 
         if (entity.expirationTime.isBefore(LocalDateTime.now())) {
