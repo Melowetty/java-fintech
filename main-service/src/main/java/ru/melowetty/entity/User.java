@@ -34,7 +34,7 @@ public class User implements UserDetails {
     private String password;
 
     @OneToMany
-    private Set<Role> authorities;
+    public Set<Role> authorities;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
