@@ -1,6 +1,8 @@
 package ru.melowetty.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -26,6 +28,18 @@ public class ExceptionHandlerController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorMessageResponse handleIllegalArgumentException(IllegalArgumentException e) {
         return new ErrorMessageResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorMessageResponse handleUsernameNotFoundException(UsernameNotFoundException e) {
+        return new ErrorMessageResponse(HttpStatus.NOT_FOUND.value(), e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorMessageResponse handleBadCredentials(BadCredentialsException e) {
+        return new ErrorMessageResponse(HttpStatus.FORBIDDEN.value(), e.getMessage());
     }
 
     @ExceptionHandler
