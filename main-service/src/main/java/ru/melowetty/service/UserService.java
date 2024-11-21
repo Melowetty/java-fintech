@@ -38,6 +38,16 @@ public class UserService implements UserDetailsService  {
         return userRepository.save(user);
     }
 
+    public User changePassword(String username, String password) {
+        var user = getUserByUsername(username);
+
+        var encodedPassword = encoder.encode(password);
+
+        user.setPassword(encodedPassword);
+
+        return userRepository.save(user);
+    }
+
     public boolean usernameIsExist(String username) {
         return userRepository.existsByUsername(username);
     }

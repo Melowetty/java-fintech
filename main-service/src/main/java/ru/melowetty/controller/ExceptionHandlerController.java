@@ -9,7 +9,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.melowetty.exception.ChangePasswordTokenIsExpired;
+import ru.melowetty.exception.MaxAttemptsSendCodeReachedException;
 import ru.melowetty.exception.UsernameAlreadyExists;
+import ru.melowetty.exception.WrongAuthCodeException;
 import ru.melowetty.model.BigErrorMessageResponse;
 import ru.melowetty.model.ErrorMessageResponse;
 
@@ -21,6 +24,24 @@ public class ExceptionHandlerController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorMessageResponse handleUsernameAlreadyExists(UsernameAlreadyExists e) {
+        return new ErrorMessageResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessageResponse handleChangePasswordTokenIsExpired(ChangePasswordTokenIsExpired e) {
+        return new ErrorMessageResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessageResponse handleWrongAuthCode(WrongAuthCodeException e) {
+        return new ErrorMessageResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessageResponse handleMaxAttemptsSendCodeReached(MaxAttemptsSendCodeReachedException e) {
         return new ErrorMessageResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
     }
 
