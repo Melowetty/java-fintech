@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.melowetty.exception.ChangePasswordTokenIsExpired;
+import ru.melowetty.exception.ChangePasswordTokenIsNotValidatedException;
 import ru.melowetty.exception.EntityNotFoundException;
 import ru.melowetty.exception.MaxAttemptsSendCodeReachedException;
 import ru.melowetty.exception.RelatedEntityNotFoundException;
@@ -69,6 +70,12 @@ public class ExceptionHandlerController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorMessageResponse handleRelatedEntityNotFoundException(RelatedEntityNotFoundException e) {
         return new ErrorMessageResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorMessageResponse handleBadCredentials(ChangePasswordTokenIsNotValidatedException e) {
+        return new ErrorMessageResponse(HttpStatus.FORBIDDEN.value(), e.getMessage());
     }
 
     @ExceptionHandler

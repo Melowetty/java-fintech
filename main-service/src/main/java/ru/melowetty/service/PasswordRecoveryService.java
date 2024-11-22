@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import ru.melowetty.exception.ChangePasswordTokenIsExpired;
+import ru.melowetty.exception.ChangePasswordTokenIsNotValidatedException;
 import ru.melowetty.exception.EntityNotFoundException;
 import ru.melowetty.exception.MaxAttemptsSendCodeReachedException;
 import ru.melowetty.exception.WrongAuthCodeException;
@@ -84,7 +85,7 @@ public class PasswordRecoveryService {
         validateToken(token);
         var entity = operations.get(token);
         if (!entity.isValidated) {
-            throw new RuntimeException("Сброс пароля еще не подтверждён!");
+            throw new ChangePasswordTokenIsNotValidatedException("Сброс пароля еще не подтверждён!");
         }
 
         var username = entity.username;
@@ -115,7 +116,7 @@ public class PasswordRecoveryService {
         return RandomStringUtils.randomAlphanumeric(32);
     }
 
-    private String generateAuthCode() {
+    public String generateAuthCode() {
         return "0000";
     }
 
