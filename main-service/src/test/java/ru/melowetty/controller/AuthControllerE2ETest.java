@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @TestPropertySource(
         properties = {
-                "spring.datasource.url=jdbc:tc:postgresql:16-alpine:///db"
+                "spring.datasource.url=jdbc:tc:postgresql:16-alpine:///auth-controller-tests"
         }
 )
 @Testcontainers
@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test-with-db")
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class AuthControllerE2ETest {
+class AuthControllerE2ETest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -49,7 +49,7 @@ public class AuthControllerE2ETest {
 
     @Test
     @Order(1)
-    public void testSuccessRegisterUser() throws Exception {
+    void testSuccessRegisterUser() throws Exception {
         var request = "{\"username\":\"melowetty\",\"password\":\"test123!\"}";
 
         var response = mockMvc.perform(post("/auth/register")
@@ -67,14 +67,14 @@ public class AuthControllerE2ETest {
 
     @Test
     @Order(2)
-    public void testUnSuccessAccessWithNoToken() throws Exception {
+    void testUnSuccessAccessWithNoToken() throws Exception {
         mockMvc.perform(get("/api/"))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     @Order(2)
-    public void testSuccessAccessWithTokenFromRegister() throws Exception {
+    void testSuccessAccessWithTokenFromRegister() throws Exception {
         mockMvc.perform(get("/api/")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + userToken))
                 .andExpect(status().isNotFound());
@@ -82,7 +82,7 @@ public class AuthControllerE2ETest {
 
     @Test
     @Order(2)
-    public void testUnSuccessLoginWhenNotValidPassword() throws Exception {
+    void testUnSuccessLoginWhenNotValidPassword() throws Exception {
         var request = "{\"username\":\"melowetty\",\"password\":\"test1234!\", \"rememberMe\":\"false\"}";
 
         mockMvc.perform(post("/auth/login")
@@ -93,7 +93,7 @@ public class AuthControllerE2ETest {
 
     @Test
     @Order(3)
-    public void testSuccessLoginWithoutRememberMeWhenValidPassword() throws Exception {
+    void testSuccessLoginWithoutRememberMeWhenValidPassword() throws Exception {
         var request = "{\"username\":\"melowetty\",\"password\":\"test123!\", \"rememberMe\":false}";
 
         var response = mockMvc.perform(post("/auth/login")
@@ -116,7 +116,7 @@ public class AuthControllerE2ETest {
 
     @Test
     @Order(3)
-    public void testSuccessLoginWithRememberMeWhenValidPassword() throws Exception {
+    void testSuccessLoginWithRememberMeWhenValidPassword() throws Exception {
         var request = "{\"username\":\"melowetty\",\"password\":\"test123!\", \"rememberMe\":true}";
 
         var response = mockMvc.perform(post("/auth/login")
@@ -139,7 +139,7 @@ public class AuthControllerE2ETest {
 
     @Test
     @Order(4)
-    public void testSuccessAccessWithTokenFromLogin() throws Exception {
+    void testSuccessAccessWithTokenFromLogin() throws Exception {
         mockMvc.perform(get("/api/")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + userToken))
                 .andExpect(status().isNotFound());
@@ -147,7 +147,7 @@ public class AuthControllerE2ETest {
 
     @Test
     @Order(4)
-    public void testUnSuccessAccessToAdminEndpointsWithTokenFromLogin() throws Exception {
+    void testUnSuccessAccessToAdminEndpointsWithTokenFromLogin() throws Exception {
         mockMvc.perform(post("/api/")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + userToken))
                 .andExpect(status().isForbidden());
@@ -155,7 +155,7 @@ public class AuthControllerE2ETest {
 
     @Test
     @Order(5)
-    public void testSuccessLogout() throws Exception {
+    void testSuccessLogout() throws Exception {
         mockMvc.perform(post("/auth/logout")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + userToken))
                 .andExpect(status().isOk());
@@ -166,7 +166,7 @@ public class AuthControllerE2ETest {
     }
 
     @Test
-    public void testUnSuccessLoginWithNoSignedToken() throws Exception {
+    void testUnSuccessLoginWithNoSignedToken() throws Exception {
         var notSignedToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Im1lbG93ZXR0eSIsInJvbGVzIjpbIlJPTEVfVVNFUiIsIlJPTEVfQURNSU4iXSwic3ViIjoibWVsb3dldHR5IiwiaWF0IjoxNzMyMjUxOTE4LCJleHAiOjE3MzQ4NDM5MTh9.XUX7h-k5WDtUtkYz-SNNDtDDXKaoX-9yLJzycgnA3u0";
         mockMvc.perform(post("/api/")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + notSignedToken))

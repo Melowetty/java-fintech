@@ -38,8 +38,6 @@ public class PasswordRecoveryController {
     }
 
 
-
-
     record InitPasswordRecoveryRequest(
             @NotBlank(message = "Имя пользователя не может быть пустым!")
             String username

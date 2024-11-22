@@ -31,7 +31,7 @@ public class PasswordRecoveryService {
         var currentDate = LocalDateTime.now();
         var token = generateToken();
         var entity = new ChangePasswordToken(
-            username,
+                username,
                 token,
                 1,
                 false,

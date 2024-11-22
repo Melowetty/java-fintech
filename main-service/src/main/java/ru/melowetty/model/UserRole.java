@@ -7,12 +7,12 @@ public enum UserRole {
     ADMIN(2, "ROLE_ADMIN");
 
     @Getter
-    private long id;
+    private final long id;
 
     @Getter
-    private String userRole;
+    private final String userRole;
 
-    private UserRole(long id, String userRole) {
+    UserRole(long id, String userRole) {
         this.id = id;
         this.userRole = userRole;
     }

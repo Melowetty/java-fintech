@@ -13,33 +13,33 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class SecurityEndpointsTest {
+class SecurityEndpointsTest {
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void attemptAccessToSecuredEndpoint() throws Exception {
+    void attemptAccessToSecuredEndpoint() throws Exception {
         mockMvc.perform(get("/api/"))
                 .andExpect(status().isUnauthorized());
     }
 
     @WithMockUser()
     @Test
-    public void successAttemptAccessToSecuredEndpoint() throws Exception {
+    void successAttemptAccessToSecuredEndpoint() throws Exception {
         mockMvc.perform(get("/api/"))
                 .andExpect(status().isNotFound());
     }
 
     @WithMockUser()
     @Test
-    public void unSuccessAttemptAccessToSecuredEndpointForAdmins() throws Exception {
+    void unSuccessAttemptAccessToSecuredEndpointForAdmins() throws Exception {
         mockMvc.perform(post("/api/"))
                 .andExpect(status().isForbidden());
     }
 
     @WithMockUser(roles = "ADMIN")
     @Test
-    public void successAttemptAccessToSecuredEndpointForAdmins() throws Exception {
+    void successAttemptAccessToSecuredEndpointForAdmins() throws Exception {
         mockMvc.perform(post("/api/"))
                 .andExpect(status().isNotFound());
     }

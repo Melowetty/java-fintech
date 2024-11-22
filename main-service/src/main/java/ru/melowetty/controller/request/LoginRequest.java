@@ -10,13 +10,13 @@ import ru.melowetty.validation.annotation.ValidPassword;
 @Data
 @AllArgsConstructor
 public class LoginRequest {
-        @Length(min = 3, max = 255)
-        @NotBlank(message = "Имя пользователя не может быть пустым")
-        String username;
+    @Length(min = 3, max = 255)
+    @NotBlank(message = "Имя пользователя не может быть пустым")
+    String username;
 
-        @ValidPassword
-        String password;
+    @ValidPassword
+    String password;
 
-        @NotNull(message = "Поле запомнить меня не должно быть пустым")
-        boolean rememberMe;
+    @NotNull(message = "Поле запомнить меня не должно быть пустым")
+    boolean rememberMe;
 }

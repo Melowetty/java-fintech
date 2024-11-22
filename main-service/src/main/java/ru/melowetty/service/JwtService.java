@@ -27,10 +27,10 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class JwtService {
-    @Value("${spring.security.jwt.private-key}")
-    private String privateKey;
     private final RevokeTokenRepository revokeTokenRepository;
     private final UserRepository userRepository;
+    @Value("${spring.security.jwt.private-key}")
+    private String privateKey;
 
     public UserInfo extractUserInfo(String token) {
         var claims = getClaims(token);
@@ -81,7 +81,7 @@ public class JwtService {
         UserInfo userInfo = extractUserInfo(token);
         var isRevoked = revokeTokenRepository.existsById(token);
         var userIsExist = userRepository.findUserByUsername(userInfo.username()).isPresent();
-        return  userIsExist
+        return userIsExist
                 && !isTokenExpired(token)
                 && !isRevoked;
     }

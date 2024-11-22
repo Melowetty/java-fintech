@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @TestPropertySource(
         properties = {
-                "spring.datasource.url=jdbc:tc:postgresql:16-alpine:///db"
+                "spring.datasource.url=jdbc:tc:postgresql:16-alpine:///password-recovery-tests"
         }
 )
 @Testcontainers
@@ -48,7 +48,7 @@ class PasswordRecoveryControllerE2ETest {
     private static String token;
 
     @BeforeEach
-    public void createUser() {
+    void createUser() {
         if (!userGenerated) {
             userService.createUser("melowetty", "test");
             userGenerated = true;
@@ -57,7 +57,7 @@ class PasswordRecoveryControllerE2ETest {
 
     @Test
     @Order(1)
-    public void initPasswordRecovery() throws Exception {
+    void initPasswordRecovery() throws Exception {
         var request = "{\"username\":\"melowetty\"}";
 
         Mockito.doReturn("9999")
@@ -76,7 +76,7 @@ class PasswordRecoveryControllerE2ETest {
 
     @Test
     @Order(2)
-    public void enterNotValidAuthCode() throws Exception {
+    void enterNotValidAuthCode() throws Exception {
         var request = String.format("{\"token\":\"%s\",\"authCode\":\"1234\"}", token);
 
         mockMvc.perform(post("/auth/password-recovery/auth-code")
@@ -87,7 +87,7 @@ class PasswordRecoveryControllerE2ETest {
 
     @Test
     @Order(2)
-    public void unSuccessAttemptToChangePassword() throws Exception {
+    void unSuccessAttemptToChangePassword() throws Exception {
         var request = String.format("{\"token\":\"%s\",\"newPassword\":\"test123!T\"}", token);
 
         var currentPasswordHash = userService.getUserByUsername("melowetty").getPassword();
@@ -104,7 +104,7 @@ class PasswordRecoveryControllerE2ETest {
 
     @Test
     @Order(3)
-    public void enterValidAuthCode() throws Exception {
+    void enterValidAuthCode() throws Exception {
         var request = String.format("{\"token\":\"%s\",\"authCode\":\"9999\"}", token);
 
         mockMvc.perform(post("/auth/password-recovery/auth-code")
@@ -115,7 +115,7 @@ class PasswordRecoveryControllerE2ETest {
 
     @Test
     @Order(4)
-    public void checkPasswordIsChanged() throws Exception {
+    void checkPasswordIsChanged() throws Exception {
         var request = String.format("{\"token\":\"%s\",\"newPassword\":\"test123!T\"}", token);
 
         var currentPasswordHash = userService.getUserByUsername("melowetty").getPassword();
