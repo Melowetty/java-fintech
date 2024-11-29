@@ -24,4 +24,12 @@ public class DemoService {
             e.printStackTrace();
         }
     }
+
+    public void stackOverflowDemo() {
+        stackOverflowDemo();
+    }
+
+    public void outOfMemoryDemo() {
+        var arr = new int[Integer.MAX_VALUE];
+    }
 }

@@ -26,4 +26,14 @@ public class DemoController {
             log.info("Task completed!");
         }
     }
+
+    @GetMapping("stackoverflow")
+    public void stackOverflow() {
+        demoService.stackOverflowDemo();
+    }
+
+    @GetMapping("out-of-memory")
+    public void outOfMemory() {
+        demoService.outOfMemoryDemo();
+    }
 }
