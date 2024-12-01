@@ -22,10 +22,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode({Mode.Throughput, Mode.AverageTime})
-@OutputTimeUnit(TimeUnit.MILLISECONDS)
+@OutputTimeUnit(TimeUnit.SECONDS)
 @Fork(1)
 @Warmup(iterations = 1)
-@Measurement(iterations = 3)
+@Measurement(iterations = 5)
 @State(Scope.Thread)
 public class RabbitBenchmark {
     public static final String RABBIT_HOST = "localhost";
